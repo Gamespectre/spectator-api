@@ -1,0 +1,5 @@
+suites:
+    main:
+        namespace: Spectator
+        psr4_prefix: Spectator
+        src_path: app
