@@ -5,7 +5,7 @@ namespace Spectator\Http\Controllers;
 use Spectator\Lib\Repositories\VideoRepository;
 use Spectator\Lib\Transformers\VideoTransformer;
 use Spectator\Lib\Traits\FractalDataTrait;
-use Spectator\Lib\Services\YoutubeResourcesCreator;
+use Spectator\Lib\Services\Youtube\YoutubeResourcesManager;
 
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
@@ -41,9 +41,9 @@ class VideoController extends ApiController {
         return $this->respond($data);
     }
 
-    public function getSource(YoutubeResourcesCreator $api)
+    public function getSource(YoutubeResourcesManager $api)
     {
-        $data = $api->getYoutubeContent("witcher 3 lets play");
+        $data = $api->searchYoutubeContent("witcher 3 lets play");
         dd($data);
     }
 }

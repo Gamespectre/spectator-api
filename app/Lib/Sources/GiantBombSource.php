@@ -3,8 +3,9 @@
 namespace Spectator\Lib\Sources;
 
 use Spectator\Lib\Interfaces\SourceInterface;
+use Spectator\Lib\Traits\GiantBombClientTrait;
 
-class GiantBombSource implements SourceInterface {
+class GiantBombSource {
 
 	use GiantBombClientTrait;
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Spectator\Lib\Sources;
+namespace Spectator\Lib\Traits;
 
 use Google_Client;
 

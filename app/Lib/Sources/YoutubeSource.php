@@ -2,59 +2,48 @@
 
 namespace Spectator\Lib\Sources;
 
-use Spectator\Lib\Interfaces\SourceInterface;
+use Spectator\Lib\Interfaces\VideoSourceInterface;
+use Spectator\Lib\Traits\YoutubeClientTrait;
 use Google_Service_YouTube;
 
-class YoutubeSource implements SourceInterface {
+class YoutubeSource implements VideoSourceInterface {
 
 	use YoutubeClientTrait;
 
-	public function get($query, $options = [])
+	private $youtube;
+
+	public function __construct()
 	{
 		$client = $this->createGoogleClient();
-		$youtube = new Google_Service_YouTube($client);
-
-		$queryParams = [
-			'type' => isset($options['type']) ? $options['type'] : 'playlist',
-			'maxResults' => isset($options['limit']) ? $options['limit'] : 50,
-			'q' => $query
-		];
-
-		if(isset($options['pageToken'])) {
-			$queryParams['pageToken'] = $options['pageToken'];
-		}
-
-		if($queryParams['type'] === 'video') {
-			$queryParams['videoEmbeddable'] = "true";
-		}
-
-		$searchResponse = $youtube->search->listSearch('snippet', $queryParams);
-
-		return $searchResponse;
+		$this->youtube = new Google_Service_YouTube($client);
 	}
 
-	public function getPlaylistVideos($playlistId)
+	public function search($params)
 	{
-		$client = $this->createGoogleClient();
-		$youtube = new Google_Service_YouTube($client);
-
-		$searchResponse = $youtube->playlistItems->list('snippet', [
-			'playlistId' => $playlistId
-		]);
-
-		return $searchResponse;
+		return $this->youtube->search->listSearch('id, snippet', $params);
 	}
 
-	public function getCreatorForResource($resource)
+	public function getVideo($params)
 	{
-		$client = $this->createGoogleClient();
-		$youtube = new Google_Service_YouTube($client);
 
-		$searchResponse = $youtube->playlistItems->list('snippet', [
-			'playlistId' => $playlistId
-		]);
+	}
 
-		return $searchResponse['items'];
+	public function getSeries($params)
+	{
+
+	}
+
+	public function getCreator($params)
+	{
+		return $this->youtube->channels->listChannels('brandingSettings, snippet, id, statistics', $params);
+	}
+
+	public function getVideosInSeries($params)
+	{
+		return $this->youtube->playlistItems->listPlaylistItems(
+			'id, snippet, contentDetails, status',
+			$params
+		);
 	}
 
 }
