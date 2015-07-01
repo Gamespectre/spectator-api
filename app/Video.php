@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Video extends Model {
 
+	protected $guarded = ['id', 'updated_at', 'created_at'];
+
 	public function creator()
 	{
 		return $this->belongsTo('Spectator\Creator');

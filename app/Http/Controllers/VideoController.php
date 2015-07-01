@@ -6,6 +6,7 @@ use Spectator\Lib\Repositories\VideoRepository;
 use Spectator\Lib\Transformers\VideoTransformer;
 use Spectator\Lib\Traits\FractalDataTrait;
 use Spectator\Lib\Services\Youtube\YoutubeResourcesManager;
+use Spectator\Lib\Repositories\GameRepository;
 
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
@@ -39,11 +40,5 @@ class VideoController extends ApiController {
         $model = $this->repo->get($id);
         $data = $this->createItemData($model, $this->transformer);
         return $this->respond($data);
-    }
-
-    public function getSource(YoutubeResourcesManager $api)
-    {
-        $data = $api->searchYoutubeContent("witcher 3 lets play");
-        dd($data);
     }
 }

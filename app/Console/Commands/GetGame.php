@@ -5,7 +5,6 @@ namespace Spectator\Console\Commands;
 use Spectator\Lib\Sources\GiantBombSource;
 use Spectator\Lib\Repositories\GameRepository;
 use Illuminate\Console\Command;
-use Illuminate\Foundation\Inspiring;
 
 class GetGame extends Command
 {

@@ -6,6 +6,7 @@ use Spectator\Video;
 use Spectator\Series;
 use Spectator\Creator;
 use Spectator\Lib\Interfaces\RepositoryInterface;
+use Carbon\Carbon;
 
 class VideoRepository implements RepositoryInterface {
 
@@ -34,6 +35,21 @@ class VideoRepository implements RepositoryInterface {
 
 	public function createModel($data)
 	{
-		dd($data);
+		$model = Video::where('video_id', $data['video_id'])->first();
+
+		if(!is_null($model)) {
+			return $model;
+		}
+
+		$props = [
+			'title' => $data['title'],
+			'video_id' => $data['video_id'],
+			'description' => $data['description'],
+			'image_url' => $data['image_url'],
+			'published_at' => Carbon::parse($data['published_at']),
+		];
+
+		$model = Video::create($props);
+		return $model;
 	}
 }

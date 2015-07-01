@@ -20,16 +20,15 @@ class ChannelService {
 		$this->source = $source;
 	}
 
-	public function getVideosCreators($videos, $force = false)
+	public function getCreatorsForVideos(array $channelIds, $force = false)
 	{
 		$cumulativeResults = [];
 
-		$uniqueIDs = array_unique(array_column($videos, 'channel_id'), SORT_REGULAR);
+		$uniqueIDs = array_unique($channelIds, SORT_REGULAR);
 
-		foreach($uniqueIDs as $channelId) {
-
-			$result = $this->getVideoCreator($channelId, $force);
-			$cumulativeResults[] = $result;
+		foreach($uniqueIDs as $channelId)
+		{
+			$cumulativeResults = array_merge($cumulativeResults, $this->getCreator($channelId, $force));
 		}
 
 		$this->creators = $this->createData($cumulativeResults, 'createCreatorItem');
@@ -37,7 +36,12 @@ class ChannelService {
 		return $this->creators;
 	}
 
-	public function getVideoCreator($channelId, $force = false)
+	public function updateCreator($channelId)
+	{
+		return $this->getCreator($channelId, true);
+	}
+
+	public function getCreator($channelId, $force = false)
 	{
 		$params = [
 			'id' => $channelId,
@@ -54,7 +58,7 @@ class ChannelService {
 			return $this->source->getCreator($params);
 		});
 
-		return $result['items'][0];
+		return $result['items'];
 	}
 
 }

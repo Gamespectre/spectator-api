@@ -17,6 +17,7 @@ class CreateSeriesTable extends Migration
             $table->string('name');
             $table->string('playlist_id')->unique();
             $table->integer('game_id');
+            $table->timestamp('published_at');
             $table->timestamps();
         });
     }

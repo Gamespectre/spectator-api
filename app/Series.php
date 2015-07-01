@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Series extends Model {
 
+	protected $guarded = ['id', 'updated_at', 'created_at'];
+
 	public function game()
 	{
 		return $this->belongsTo('Spectator\Game');

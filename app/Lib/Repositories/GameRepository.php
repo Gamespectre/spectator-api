@@ -15,7 +15,7 @@ class GameRepository implements RepositoryInterface {
 	}
 
 	public function get($id, $loadRelated = true) {
-		$game = Game::find($id);
+		$game = Game::find((int) $id);
 
 		if($loadRelated && $game !== null) {
 			$game->load('videos.creator', 'series');

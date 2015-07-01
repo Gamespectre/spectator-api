@@ -17,10 +17,10 @@ class CreateCreatorsTable extends Migration
             $table->string('name');
             $table->string('subscribers');
             $table->text('description');
-            $table->string('birthday');
             $table->string('image_url');
             $table->string('avatar_url');
             $table->string('channel_id')->unique();
+            $table->timestamp('birthday');
             $table->timestamps();
         });
     }

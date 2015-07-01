@@ -41,7 +41,7 @@ class GetVideos extends Command
      */
     public function handle()
     {
-        $data = $this->api->getYoutubeContent("witcher 3 lets play", $this);
+        $data = $this->api->searchYoutubeContent("witcher 3 lets play", $this);
         $this->info('Got data!');
     }
 }

@@ -16,10 +16,11 @@ class CreateVideosTable extends Migration
             $table->increments('id');
             $table->string('title');
             $table->text('description');
+            $table->string('image_url');
             $table->string('video_id')->unique();
-            $table->string('published_at');
             $table->integer('creator_id');
             $table->integer('game_id');
+            $table->timestamp('published_at');
             $table->timestamps();
         });
     }

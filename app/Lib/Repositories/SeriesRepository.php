@@ -26,6 +26,12 @@ class SeriesRepository implements RepositoryInterface {
 		return $game->series()->with('videos.creator')->get();
 	}
 
+	public function getSeriesByPlaylistId($playlistid)
+	{
+		$series = $this->series->where('playlist_id', $playlistid);
+		return $series->with('videos.creator')->first();
+	}
+
 	public function get($id)
 	{
 		$series = Series::findOrFail($id)->load('videos.creator')->get();
@@ -34,7 +40,20 @@ class SeriesRepository implements RepositoryInterface {
 
 	public function createModel($data)
 	{
-		//
+		$model = Series::where('playlist_id', $data['playlist_id'])->first();
+
+		if(!is_null($model)) {
+			return $model;
+		}
+
+		$props = [
+			'name' => $data['name'],
+			'playlist_id' => $data['playlist_id'],
+			'published_at' => $data['published_at'],
+		];
+
+		$model = Series::create($props);
+		return $model;
 	}
 
 }

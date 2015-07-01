@@ -12,7 +12,6 @@ class VideoService {
 
 	use YoutubeDataTransformerTrait;
 
-	public $videos = [];
 	private $source;
 
 	public function __construct(YoutubeSource $source)
@@ -20,20 +19,65 @@ class VideoService {
 		$this->source = $source;
 	}
 
-	public function getPlaylistsVideos($playlists, $force = false)
+	public function getVideosForPlaylists(array $playlistIds, $force = false)
 	{
+		if(count($playlistIds) === 0) {
+			return [];
+		}
+
 		$cumulativeResults = [];
 
-		foreach($playlists as $playlist)
-		{
-			$playlistId = $playlist['playlist_id'];
+		$uniqueIds = array_unique($playlistIds, SORT_REGULAR);
 
+		foreach($uniqueIds as $playlistId)
+		{
 			$cumulativeResults = array_merge($cumulativeResults, $this->getVideosInPlaylist($playlistId, $force));
 		}
 
-		$this->videos = $this->createData($cumulativeResults, 'createVideoItem');
+		return $this->createData($cumulativeResults, 'createVideoItem');
+	}
 
-		return $this->videos;
+	public function getVideos(array $videoIds, $force = false)
+	{
+		if(count($videoIds) === 0) {
+			return [];
+		}
+
+		$cumulativeResults = [];
+
+		$uniqueIds = array_unique($videoIds, SORT_REGULAR);
+
+		foreach($uniqueIds as $videoId)
+		{
+			$cumulativeResults = array_merge($cumulativeResults, $this->getVideo($videoId, $force));
+		}
+
+		return $this->createData($cumulativeResults, 'createVideoItem');
+	}
+
+	public function updateVideo($videoId)
+	{
+		return $this->getVideo($videoId, true);
+	}
+
+	public function getVideo($videoId, $force = false)
+	{
+		$params = [
+			'maxResults' => 1,
+			'id' => $videoId
+		];
+
+		$cacheKey = $videoId;
+
+		if($force === true) {
+			Cache::forget($cacheKey);
+		}
+
+		$results = Cache::rememberForever($cacheKey, function() use ($params) {
+			return $this->source->getVideo($params);
+		});
+
+		return $results['items'];
 	}
 
 	public function getVideosInPlaylist($playlistId, $force = false)
@@ -42,7 +86,7 @@ class VideoService {
 		$fetched = 0;
 		$pageToken = '';
 		$resultsPerCall = 50;
-		$totalResults = 9999; // Initially high
+		$totalResults = 9999;
 		$cumulativeResults = [];
 
 		for($i = 0; $i < $totalResults; $i += $resultsPerCall)
@@ -59,18 +103,30 @@ class VideoService {
 				Cache::forget($cacheKey);
 			}
 
-			$results = Cache::rememberForever($cacheKey, function() use ($params) {
+			$playlistItemResults = Cache::remember($cacheKey, env('API_CACHE_MINUTES', 60), function() use ($params) {
 				return $this->source->getVideosInSeries($params);
 			});
 
-			$totalResults = (int) $results['pageInfo']['totalResults'];
-			$fetched += (int) $results['pageInfo']['resultsPerPage'];
+			$videoResults = [];
+
+			foreach($playlistItemResults as $plItem) {
+				$videoResult = $this->getVideo($plItem->snippet->resourceId->videoId, $force);
+
+				if(isset($videoResult[0])) {
+					$videoResult[0]->snippet->playlistId = $plItem->snippet->playlistId;
+				}
+
+				$videoResults = array_merge($videoResults, $videoResult);
+			}
+
+			$totalResults = (int) $playlistItemResults['pageInfo']['totalResults'];
+			$fetched += (int) $playlistItemResults['pageInfo']['resultsPerPage'];
 			$stuffLeft = $totalResults - $fetched;
 			$resultsPerCall = $stuffLeft < $resultsPerCall ? $stuffLeft : $resultsPerCall;
 
-			$pageToken = $results['nextPageToken'];
+			$pageToken = $playlistItemResults['nextPageToken'];
 
-			$cumulativeResults = array_merge($cumulativeResults, $results['items']);
+			$cumulativeResults = array_merge($cumulativeResults, $videoResults);
 
 			$page++;
 

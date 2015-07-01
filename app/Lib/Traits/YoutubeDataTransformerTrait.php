@@ -4,7 +4,7 @@ namespace Spectator\Lib\Traits;
 
 trait YoutubeDataTransformerTrait {
 
-	protected function createData($data, $processor)
+	public function createData($data, $processor)
 	{
 		$processed = [];
 
@@ -16,39 +16,53 @@ trait YoutubeDataTransformerTrait {
 		return array_unique($processed, SORT_REGULAR);
 	}
 
-	protected function createPlaylistItem($raw)
+	public function createPlaylistItem($raw)
 	{
 		return [
-			'playlist_id' => $raw['id']['playlistId'],
-			'channel_id' => $raw['snippet']['channelId'],
-			'title' => $raw['snippet']['title'],
-			'timestamp' => $raw['snippet']['publishedAt'],
+			'playlist_id' => $raw->id->playlistId,
+			'channel_id' => $raw->snippet->channelId,
+			'name' => $raw->snippet->title,
+			'published_at' => $raw->snippet->publishedAt,
 		];
 	}
 
-	protected function createVideoItem($raw)
+	public function createPlaylistVideoItem($raw)
 	{
-		$data = $raw['snippet'];
+		$data = $raw->snippet;
 
 		return [
-			'video_id' => $data['resourceId']['videoId'],
-			'channel_id' => $data['channelId'],
-			'title' => $data['title'],
-			'description' => $data['description'],
-			'published_at' => $data['publishedAt'],
+			'video_id' => $data->resourceId->videoId,
+			'channel_id' => $data->channelId,
+			'playlist_id' => $data->playlistId,
+			'title' => $data->title,
+			'description' => $data->description,
+			'published_at' => $data->publishedAt,
 		];
 	}
 
-	protected function createCreatorItem($raw)
+	public function createVideoItem($raw)
 	{
 		return [
-			'channel_id' => $raw['id'],
-			'name' => $raw['snippet']['title'],
-			'subscribers' => $raw['statistics']['subscriberCount'],
-			'description' => $raw['snippet']['description'],
-			'birthday' => $raw['snippet']['publishedAt'],
-			'avatar_url' => $raw['snippet']['thumbnails']['high']['url'],
-			'image_url' => $raw['brandingSettings']['image']['bannerTabletExtraHdImageUrl'],
+			'video_id' => $raw->id,
+			'playlist_id' => isset($raw->snippet->playlistId) ? $raw->snippet->playlistId : "",
+			'channel_id' => $raw->snippet->channelId,
+			'title' => $raw->snippet->title,
+			'description' => $raw->snippet->description,
+			'published_at' => $raw->snippet->publishedAt,
+			'image_url' => $raw->snippet->thumbnails->high->url,
+		];
+	}
+
+	public function createCreatorItem($raw)
+	{
+		return [
+			'channel_id' => $raw->id,
+			'name' => $raw->snippet->title,
+			'subscribers' => $raw->statistics->subscriberCount,
+			'description' => $raw->snippet->description,
+			'birthday' => $raw->snippet->publishedAt,
+			'avatar_url' => $raw->snippet->thumbnails->high->url,
+			'image_url' => !isset($raw->brandingSettings->image->bannerImageUrl) ? "no image" : $raw->brandingSettings->image->bannerImageUrl,
 		];
 	}
 

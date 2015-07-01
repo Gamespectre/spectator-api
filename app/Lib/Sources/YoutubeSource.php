@@ -25,12 +25,12 @@ class YoutubeSource implements VideoSourceInterface {
 
 	public function getVideo($params)
 	{
-
+		return $this->youtube->videos->listVideos('id, snippet, statistics', $params);
 	}
 
 	public function getSeries($params)
 	{
-
+		return $this->youtube->playlists->listPlaylists('id, snippet', $params);
 	}
 
 	public function getCreator($params)
@@ -40,10 +40,7 @@ class YoutubeSource implements VideoSourceInterface {
 
 	public function getVideosInSeries($params)
 	{
-		return $this->youtube->playlistItems->listPlaylistItems(
-			'id, snippet, contentDetails, status',
-			$params
-		);
+		return $this->youtube->playlistItems->listPlaylistItems('id, snippet', $params);
 	}
 
 }
