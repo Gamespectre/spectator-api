@@ -19,7 +19,7 @@ trait YoutubeDataTransformerTrait {
 	public function createPlaylistItem($raw)
 	{
 		return [
-			'playlist_id' => $raw->id->playlistId,
+			'playlist_id' => isset($raw->id->playlistId) ? $raw->id->playlistId : $raw->id,
 			'channel_id' => $raw->snippet->channelId,
 			'name' => $raw->snippet->title,
 			'published_at' => $raw->snippet->publishedAt,

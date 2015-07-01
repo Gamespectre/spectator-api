@@ -50,7 +50,7 @@ class PlaylistService {
 			'id' => $playlistId
 		];
 
-		$cacheKey = $id;
+		$cacheKey = $playlistId;
 
 		if($force === true) {
 			Cache::forget($cacheKey);

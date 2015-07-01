@@ -60,14 +60,14 @@ class YoutubeResourcesManager {
 	public function addVideo($videoId, Game $assocGame)
 	{
 		$video = $this->videos->getVideo($videoId);
-		$videoData = $this->videos->createVideoItem($video);
+		$videoData = $this->videos->createVideoItem($video[0]);
 
-		$creator = $this->creators->getCreator($videoData->channel_id);
-		$creatorData = $this->creators->createCreatorItem($creator);
+		$creator = $this->creators->getCreator($videoData['channel_id']);
+		$creatorData = $this->creators->createCreatorItem($creator[0]);
 
 		$data = [
-			'videos' => $videoData,
-			'creators' => $creatorData
+			'videos' => [$videoData],
+			'creators' => [$creatorData]
 		];
 
 		$this->youtubeRepo->saveAll($data, $assocGame);
