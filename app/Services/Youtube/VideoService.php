@@ -1,10 +1,10 @@
 <?php
 
-namespace Spectator\Lib\Services\Youtube;
+namespace Spectator\Services\Youtube;
 
 use Cache;
-use Spectator\Lib\Traits\YoutubeDataTransformerTrait;
-use Spectator\Lib\Sources\YoutubeSource;
+use Spectator\Traits\YoutubeDataTransformerTrait;
+use Spectator\Sources\YoutubeSource;
 
 set_time_limit(0);
 
@@ -55,6 +55,26 @@ class VideoService {
 		return $this->createData($cumulativeResults, 'createVideoItem');
 	}
 
+	public function getVideosBatch(array $videoIds, $cacheKey, $force = false)
+	{
+		$videoIdsString = implode($videoIds, ',');
+
+		$params = [
+			'maxResults' => 50,
+			'id' => $videoIdsString
+		];
+
+		if($force === true) {
+			Cache::forget($cacheKey);
+		}
+
+		$results = Cache::rememberForever($cacheKey, function() use ($params) {
+			return $this->source->getVideo($params);
+		});
+
+		return $results['items'];
+	}
+
 	public function updateVideo($videoId)
 	{
 		return $this->getVideo($videoId, true);
@@ -82,22 +102,18 @@ class VideoService {
 
 	public function getVideosInPlaylist($playlistId, $force = false)
 	{
-		$page = 0;
-		$fetched = 0;
-		$pageToken = '';
-		$resultsPerCall = 50;
-		$totalResults = 9999;
+		$pager = new YoutubeApiPager(50);
 		$cumulativeResults = [];
 
-		for($i = 0; $i < $totalResults; $i += $resultsPerCall)
-		{
+		$pager->page(function($pager) use (&$cumulativeResults, $playlistId, $force) {
+
 			$params = [
-				'maxResults' => $resultsPerCall,
+				'maxResults' => $pager->getChunk(),
 				'playlistId' => $playlistId,
-				'pageToken' => $pageToken
+				'pageToken' => $pager->getToken()
 			];
 
-			$cacheKey = $playlistId . ':videos:' . $page;
+			$cacheKey = $playlistId . ':videos:' . $pager->getPage();
 
 			if($force === true) {
 				Cache::forget($cacheKey);
@@ -107,33 +123,28 @@ class VideoService {
 				return $this->source->getVideosInSeries($params);
 			});
 
-			$videoResults = [];
+			if(!empty($playlistItemResults['items'])) {
+				$videoIds = [];
 
-			foreach($playlistItemResults as $plItem) {
-				$videoResult = $this->getVideo($plItem->snippet->resourceId->videoId, $force);
-
-				if(isset($videoResult[0])) {
-					$videoResult[0]->snippet->playlistId = $plItem->snippet->playlistId;
+				foreach($playlistItemResults as $plItem) {
+					$videoIds[] = $plItem->snippet->resourceId->videoId;
 				}
 
-				$videoResults = array_merge($videoResults, $videoResult);
+				$batchCacheKey = $playlistId . ':videos:batch:' . $pager->getPage();
+
+				$videos = array_map(function($video) use ($playlistId) {
+					$video->snippet->playlistId = $playlistId;
+					return $video;
+				}, $this->getVideosBatch($videoIds, $batchCacheKey));
+
+				$cumulativeResults = array_merge(
+					$cumulativeResults,
+					$videos
+				);
 			}
 
-			$totalResults = (int) $playlistItemResults['pageInfo']['totalResults'];
-			$fetched += (int) $playlistItemResults['pageInfo']['resultsPerPage'];
-			$stuffLeft = $totalResults - $fetched;
-			$resultsPerCall = $stuffLeft < $resultsPerCall ? $stuffLeft : $resultsPerCall;
-
-			$pageToken = $playlistItemResults['nextPageToken'];
-
-			$cumulativeResults = array_merge($cumulativeResults, $videoResults);
-
-			$page++;
-
-			if($stuffLeft <= 0 || is_null($pageToken)) {
-				break;
-			}
-		}
+			return $playlistItemResults;
+		});
 
 		return $cumulativeResults;
 	}

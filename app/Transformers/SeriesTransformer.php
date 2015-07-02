@@ -1,6 +1,6 @@
 <?php
 
-namespace Spectator\Lib\Transformers;
+namespace Spectator\Transformers;
 
 use League\Fractal\TransformerAbstract;
 use Illuminate\Database\Eloquent\Collection;

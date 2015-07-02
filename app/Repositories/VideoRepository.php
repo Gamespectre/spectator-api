@@ -1,11 +1,11 @@
 <?php
 
-namespace Spectator\Lib\Repositories;
+namespace Spectator\Repositories;
 
 use Spectator\Video;
 use Spectator\Series;
 use Spectator\Creator;
-use Spectator\Lib\Interfaces\RepositoryInterface;
+use Spectator\Interfaces\RepositoryInterface;
 use Carbon\Carbon;
 
 class VideoRepository implements RepositoryInterface {

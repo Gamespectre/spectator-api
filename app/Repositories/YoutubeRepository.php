@@ -1,6 +1,6 @@
 <?php
 
-namespace Spectator\Lib\Repositories;
+namespace Spectator\Repositories;
 
 use Spectator\Game;
 

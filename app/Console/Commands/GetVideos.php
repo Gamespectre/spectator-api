@@ -2,9 +2,10 @@
 
 namespace Spectator\Console\Commands;
 
-use Spectator\Lib\Repositories\GameRepository;
-use Spectator\Lib\Repositories\VideoRepository;
-use Spectator\Lib\Services\Youtube\YoutubeResourcesManager;
+use Spectator\Repositories\GameRepository;
+use Spectator\Repositories\VideoRepository;
+use Spectator\Repositories\YoutubeRepository;
+use Spectator\Services\Youtube\YoutubeResourcesManager;
 use Illuminate\Console\Command;
 
 class GetVideos extends Command
@@ -12,11 +13,13 @@ class GetVideos extends Command
     private $repo;
     private $api;
     private $gameRepo;
+    private $youtubeRepo;
 
-    public function __construct(YoutubeResourcesManager $api, GameRepository $gameRepo, VideoRepository $repo) {
+    public function __construct(YoutubeRepository $youtube, YoutubeResourcesManager $api, GameRepository $gameRepo, VideoRepository $repo) {
         parent::__construct();
 
         $this->gameRepo = $gameRepo;
+        $this->youtubeRepo = $youtube;
         $this->api = $api;
         $this->repo = $repo;
     }
@@ -25,7 +28,7 @@ class GetVideos extends Command
      *
      * @var string
      */
-    protected $signature = 'spectator:get:videos';
+    protected $signature = 'spectator:get:videos {game} {--force}';
 
     /**
      * The console command description.
@@ -41,7 +44,12 @@ class GetVideos extends Command
      */
     public function handle()
     {
-        $data = $this->api->searchYoutubeContent("witcher 3 lets play", $this);
-        $this->info('Got data!');
+        $gameId = (int) $this->argument('game');
+        $game = $this->gameRepo->get($gameId);
+        $data = $this->api->searchYoutubeContent($game->title . " lets play", 5, $this->option('force'));
+
+        $this->youtubeRepo->saveAll($data, $game);
+
+        $this->info('Saved fresh data.');
     }
 }

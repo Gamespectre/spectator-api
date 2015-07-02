@@ -2,9 +2,9 @@
 
 namespace Spectator\Http\Controllers;
 
-use Spectator\Lib\Repositories\GameRepository;
-use Spectator\Lib\Transformers\GameTransformer;
-use Spectator\Lib\Traits\FractalDataTrait;
+use Spectator\Repositories\GameRepository;
+use Spectator\Transformers\GameTransformer;
+use Spectator\Traits\FractalDataTrait;
 
 use Illuminate\Http\Request;
 use League\Fractal\Manager;

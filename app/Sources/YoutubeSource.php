@@ -1,9 +1,9 @@
 <?php
 
-namespace Spectator\Lib\Sources;
+namespace Spectator\Sources;
 
-use Spectator\Lib\Interfaces\VideoSourceInterface;
-use Spectator\Lib\Traits\YoutubeClientTrait;
+use Spectator\Interfaces\VideoSourceInterface;
+use Spectator\Traits\YoutubeClientTrait;
 use Google_Service_YouTube;
 
 class YoutubeSource implements VideoSourceInterface {

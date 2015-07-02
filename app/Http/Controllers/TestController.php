@@ -7,9 +7,9 @@ use Illuminate\Http\Request;
 use Spectator\Http\Requests;
 use Spectator\Http\Controllers\Controller;
 
-use Spectator\Lib\Repositories\GameRepository;
-use Spectator\Lib\Repositories\YoutubeRepository;
-use Spectator\Lib\Services\Youtube\YoutubeResourcesManager;
+use Spectator\Repositories\GameRepository;
+use Spectator\Repositories\YoutubeRepository;
+use Spectator\Services\Youtube\YoutubeResourcesManager;
 
 class TestController extends Controller
 {

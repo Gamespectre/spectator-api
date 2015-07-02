@@ -1,9 +1,9 @@
 <?php
 
-namespace Spectator\Lib\Sources;
+namespace Spectator\Sources;
 
-use Spectator\Lib\Interfaces\SourceInterface;
-use Spectator\Lib\Traits\GiantBombClientTrait;
+use Spectator\Interfaces\SourceInterface;
+use Spectator\Traits\GiantBombClientTrait;
 
 class GiantBombSource {
 

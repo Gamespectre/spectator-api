@@ -2,11 +2,11 @@
 
 namespace Spectator\Http\Controllers;
 
-use Spectator\Lib\Repositories\VideoRepository;
-use Spectator\Lib\Transformers\VideoTransformer;
-use Spectator\Lib\Traits\FractalDataTrait;
-use Spectator\Lib\Services\Youtube\YoutubeResourcesManager;
-use Spectator\Lib\Repositories\GameRepository;
+use Spectator\Repositories\VideoRepository;
+use Spectator\Transformers\VideoTransformer;
+use Spectator\Traits\FractalDataTrait;
+use Spectator\Services\Youtube\YoutubeResourcesManager;
+use Spectator\Repositories\GameRepository;
 
 use Illuminate\Http\Request;
 use League\Fractal\Manager;

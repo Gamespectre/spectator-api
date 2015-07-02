@@ -1,6 +1,6 @@
 <?php
 
-namespace Spectator\Lib\Traits;
+namespace Spectator\Traits;
 
 use League\Fractal\TransformerAbstract;
 use League\Fractal\Resource\Collection;

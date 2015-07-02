@@ -1,12 +1,12 @@
 <?php
 
-namespace Spectator\Lib\Services\Youtube;
+namespace Spectator\Services\Youtube;
 
 use Spectator\Game;
-use Spectator\Lib\Repositories\VideoRepository;
-use Spectator\Lib\Repositories\SeriesRepository;
-use Spectator\Lib\Repositories\CreatorRepository;
-use Spectator\Lib\Repositories\YoutubeRepository;
+use Spectator\Repositories\VideoRepository;
+use Spectator\Repositories\SeriesRepository;
+use Spectator\Repositories\CreatorRepository;
+use Spectator\Repositories\YoutubeRepository;
 
 set_time_limit(0);
 
@@ -25,9 +25,9 @@ class YoutubeResourcesManager {
 		$this->videos = $videos;
 	}
 
-	public function searchYoutubeContent($initalQuery, $playlistsToGet = 10)
+	public function searchYoutubeContent($initalQuery, $playlistsToGet = 10, $force = false)
 	{
-		$playlists = $this->playlists->searchPlaylists($initalQuery, $playlistsToGet);
+		$playlists = $this->playlists->searchPlaylists($initalQuery, $playlistsToGet, $force);
 		$videos = $this->videos->getVideosForPlaylists(array_column($playlists, 'playlist_id'));
 		$creators = $this->creators->getCreatorsForVideos(array_column($videos, 'channel_id'));
 

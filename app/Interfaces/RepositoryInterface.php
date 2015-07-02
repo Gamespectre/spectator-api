@@ -1,6 +1,6 @@
 <?php
 
-namespace Spectator\Lib\Interfaces;
+namespace Spectator\Interfaces;
 
 interface RepositoryInterface {
 

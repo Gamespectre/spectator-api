@@ -1,6 +1,6 @@
 <?php
 
-namespace Spectator\Lib\Services;
+namespace Spectator\Services;
 
 use Debugbar;
 

@@ -1,10 +1,10 @@
 <?php
 
-namespace Spectator\Lib\Services\Youtube;
+namespace Spectator\Services\Youtube;
 
 use Cache;
-use Spectator\Lib\Traits\YoutubeDataTransformerTrait;
-use Spectator\Lib\Sources\YoutubeSource;
+use Spectator\Traits\YoutubeDataTransformerTrait;
+use Spectator\Sources\YoutubeSource;
 
 set_time_limit(0);
 

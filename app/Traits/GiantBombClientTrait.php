@@ -1,6 +1,6 @@
 <?php
 
-namespace Spectator\Lib\Traits;
+namespace Spectator\Traits;
 
 use GiantBomb\Client\GiantBombClient;
 

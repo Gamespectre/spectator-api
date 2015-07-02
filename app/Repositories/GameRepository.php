@@ -1,9 +1,9 @@
 <?php
 
-namespace Spectator\Lib\Repositories;
+namespace Spectator\Repositories;
 
 use Spectator\Game;
-use Spectator\Lib\Interfaces\RepositoryInterface;
+use Spectator\Interfaces\RepositoryInterface;
 use Carbon\Carbon;
 
 class GameRepository implements RepositoryInterface {
