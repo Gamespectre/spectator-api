@@ -52,9 +52,9 @@ class YoutubeServiceManager {
 
 	public function addPlaylists(array $playlistIds, Game $assocGame)
 	{
-		$playlists = $this->playlists->getPlaylists($playlistIds);
-		$videos = $this->videos->getVideosForPlaylists(array_column($playlists, 'playlist_id'));
-		$creators = $this->creators->getCreatorsForVideos(array_column($videos, 'channel_id'));
+		$playlists = $this->playlists->getPlaylists(collect($playlistIds));
+		$videos = $this->videos->getVideosForPlaylists($playlists);
+		$creators = $this->creators->getCreatorsForVideos($videos);
 
 		$data = [
 			'videos' => $videos,
@@ -70,14 +70,11 @@ class YoutubeServiceManager {
 	public function addVideo($videoId, Game $assocGame)
 	{
 		$video = $this->videos->getVideo($videoId);
-		$videoData = $this->videos->createVideoItem($video[0]);
-
-		$creator = $this->creators->getCreator($videoData['channel_id']);
-		$creatorData = $this->creators->createCreatorItem($creator[0]);
+		$creator = $this->creators->getCreator($video->channel);
 
 		$data = [
-			'videos' => [$videoData],
-			'creators' => [$creatorData]
+			'videos' => collect([$video]),
+			'creators' => collect([$creator])
 		];
 
 		$this->youtubeRepo->saveAll($data, $assocGame);

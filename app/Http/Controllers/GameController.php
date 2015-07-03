@@ -26,7 +26,7 @@ class GameController extends ApiController {
         $this->transformer = $transformer;
     }
 
-    public function index()
+    public function getIndex()
     {
         $model = $this->repo->getAll();
         $data = $this->createCollectionData($model, $this->transformer);

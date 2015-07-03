@@ -14,7 +14,7 @@ abstract class ApiService {
 
 		return $idCollection
 			->unique()
-			->map(function($item, $key) use ($force) {
+			->map(function($item, $key) use ($force, $method) {
 				return call_user_func([$this, $method], $item, $force);
 			});
 	}
