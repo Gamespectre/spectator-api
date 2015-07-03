@@ -38,22 +38,4 @@ class SeriesRepository implements RepositoryInterface {
 		return $series->first();
 	}
 
-	public function createModel($data)
-	{
-		$model = Series::where('playlist_id', $data['playlist_id'])->first();
-
-		if(!is_null($model)) {
-			return $model;
-		}
-
-		$props = [
-			'name' => $data['name'],
-			'playlist_id' => $data['playlist_id'],
-			'published_at' => $data['published_at'],
-		];
-
-		$model = Series::create($props);
-		return $model;
-	}
-
 }

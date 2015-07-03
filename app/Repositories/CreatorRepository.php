@@ -23,26 +23,4 @@ class CreatorRepository implements RepositoryInterface {
 		$creator = Creator::findOrFail($id)->load('videos')->get();
 		return $creator->first();
 	}
-
-	public function createModel($data)
-	{
-		$model = Creator::where('channel_id', $data['channel_id'])->first();
-
-		if(!is_null($model)) {
-			return $model;
-		}
-
-		$props = [
-			'name' => $data['name'],
-			'channel_id' => $data['channel_id'],
-			'subscribers' => $data['subscribers'],
-			'description' => $data['description'],
-			'image_url' => $data['image_url'],
-			'avatar_url' => $data['avatar_url'],
-			'birthday' => Carbon::parse($data['birthday']),
-		];
-
-		$model = Creator::create($props);
-		return $model;
-	}
 }

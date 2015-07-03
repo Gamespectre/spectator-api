@@ -9,7 +9,7 @@ use Spectator\Http\Controllers\Controller;
 
 use Spectator\Repositories\GameRepository;
 use Spectator\Repositories\YoutubeRepository;
-use Spectator\Services\Youtube\YoutubeResourcesManager;
+use Spectator\Services\Youtube\YoutubeServiceManager;
 
 class TestController extends Controller
 {
@@ -18,7 +18,7 @@ class TestController extends Controller
     private $manager;
     private $youtubeRepo;
 
-    public function __construct(YoutubeResourcesManager $manager, GameRepository $game, YoutubeRepository $youtubeRepo)
+    public function __construct(YoutubeServiceManager $manager, GameRepository $game, YoutubeRepository $youtubeRepo)
     {
         $this->game = $game;
         $this->manager = $manager;

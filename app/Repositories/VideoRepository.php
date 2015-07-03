@@ -32,24 +32,4 @@ class VideoRepository implements RepositoryInterface {
 		$video = Video::findOrFail($id)->load('series', 'creator', 'game')->get();
 		return $video->first();
 	}
-
-	public function createModel($data)
-	{
-		$model = Video::where('video_id', $data['video_id'])->first();
-
-		if(!is_null($model)) {
-			return $model;
-		}
-
-		$props = [
-			'title' => $data['title'],
-			'video_id' => $data['video_id'],
-			'description' => $data['description'],
-			'image_url' => $data['image_url'],
-			'published_at' => Carbon::parse($data['published_at']),
-		];
-
-		$model = Video::create($props);
-		return $model;
-	}
 }

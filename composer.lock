@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "a89216fca80464d0425ac3a351eed7d1",
+    "hash": "4bcbe0fcaaae66c294cfb090db3e4313",
     "packages": [
         {
             "name": "barryvdh/laravel-debugbar",
@@ -1009,7 +1009,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/ea52f5949daed290c9a3381ba6e839767cc79866",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/356418f315e4f6bf55d2f4bd451606e45a7595df",
                 "reference": "ea52f5949daed290c9a3381ba6e839767cc79866",
                 "shasum": ""
             },
@@ -1126,6 +1126,47 @@
                 "laravel"
             ],
             "time": "2015-07-02 14:06:05"
+        },
+        {
+            "name": "laravel/homestead",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/homestead.git",
+                "reference": "835d8f223a95fd763f6fc7c4ee119692893af3a1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/homestead/zipball/835d8f223a95fd763f6fc7c4ee119692893af3a1",
+                "reference": "835d8f223a95fd763f6fc7c4ee119692893af3a1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4",
+                "symfony/console": "~2.0",
+                "symfony/process": "~2.0"
+            },
+            "bin": [
+                "homestead"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Homestead\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylorotwell@gmail.com"
+                }
+            ],
+            "description": "A virtual machine for web artisans.",
+            "time": "2015-06-29 21:00:49"
         },
         {
             "name": "league/flysystem",
@@ -1550,7 +1591,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/fd7ee2e083860f40a1f7f51a3db449b5a734bab5",
+                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/7fbbf83011fe6e2564d54b720270f963408e08e5",
                 "reference": "fd7ee2e083860f40a1f7f51a3db449b5a734bab5",
                 "shasum": ""
             },
@@ -1595,7 +1636,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/nrk/predis/zipball/b8decc75a884fce1bfc62d5bc6823298a678f890",
+                "url": "https://api.github.com/repos/nrk/predis/zipball/7a984e7b7650cf37ea9b5a71ebc1a1a3ea7b7542",
                 "reference": "b8decc75a884fce1bfc62d5bc6823298a678f890",
                 "shasum": ""
             },
@@ -3792,7 +3833,8 @@
         "giantbomb/giantbomb-php-api": 20,
         "barryvdh/laravel-debugbar": 20,
         "madcoda/php-youtube-api": 20,
-        "predis/predis": 20
+        "predis/predis": 20,
+        "laravel/homestead": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

@@ -9,19 +9,27 @@ class YoutubeApiPager {
 	private $page = 0;
 	private $total = 9999;
 	private $stuffLeft = 0;
+	private $totalToGet = 0;
 	private $lastFetched = 0;
 	private $totalFetched = 0;
+	private $absoluteTotal = false;
 
-	public function __construct($chunkSize)
+	public function __construct($totalToGet, $chunkSize = false, $absoluteTotal = false)
 	{
-		$this->chunk = $chunkSize;
+        $chunk = !$chunkSize ? $totalToGet : $chunkSize;
+
+		$this->chunk = $chunk;
+		$this->totalToGet = $totalToGet;
+
+		if($absoluteTotal === true) {
+			$this->total = $chunk;
+			$this->absoluteTotal = true;
+		}
 	}
 
 	public function page(callable $action)
 	{
-		$i = 0;
-
-		for($i; $i < $this->getTotal(); $i += $this->getLastFetched()) {
+		while($this->totalFetched < $this->getTotal()) {
 			$data = $action($this);
 
 			if($data === false) {
@@ -40,7 +48,7 @@ class YoutubeApiPager {
 	{
 		$this->lastFetched = (int) $data['pageInfo']['resultsPerPage'];
 		$this->token = $data['nextPageToken'];
-		$this->total = (int) $data['pageInfo']['totalResults'];
+		$this->total = $this->absoluteTotal === false ? (int) $data['pageInfo']['totalResults'] : $this->totalToGet;
 
 		$this->totalFetched += $this->lastFetched;
 		$this->stuffLeft = $this->total - $this->totalFetched;
@@ -60,7 +68,7 @@ class YoutubeApiPager {
 
 	public function getTotal()
 	{
-		return $this->total;
+		return $this->absoluteTotal === true ? $this->totalToGet : $this->total;
 	}
 
 	public function getLastFetched()

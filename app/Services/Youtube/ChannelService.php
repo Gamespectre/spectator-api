@@ -3,16 +3,15 @@
 namespace Spectator\Services\Youtube;
 
 use Cache;
-use Spectator\Traits\YoutubeDataTransformerTrait;
+use Spectator\Datamodels\Channel;
+use Spectator\Services\ApiService;
 use Spectator\Sources\YoutubeSource;
+use Illuminate\Support\Collection;
 
 set_time_limit(0);
 
-class ChannelService {
+class ChannelService extends ApiService {
 
-	use YoutubeDataTransformerTrait;
-
-	public $creators = [];
 	private $source;
 
 	public function __construct(YoutubeSource $source)
@@ -20,20 +19,21 @@ class ChannelService {
 		$this->source = $source;
 	}
 
-	public function getCreatorsForVideos(array $channelIds, $force = false)
+	public function getCreators(Collection $channelIds, $force = false)
 	{
-		$cumulativeResults = [];
+		return $this->getFromIds($channelIds, 'getCreator', $force);
+	}
 
-		$uniqueIDs = array_unique($channelIds, SORT_REGULAR);
-
-		foreach($uniqueIDs as $channelId)
-		{
-			$cumulativeResults = array_merge($cumulativeResults, $this->getCreator($channelId, $force));
-		}
-
-		$this->creators = $this->createData($cumulativeResults, 'createCreatorItem');
-
-		return $this->creators;
+	public function getCreatorsForVideos(Collection $videos, $force = false)
+	{
+		return $videos
+			->map(function($video) {
+				return $video->channel;
+			})
+			->unique()
+			->map(function($item, $key) use ($force) {
+				return $this->getCreator($item, $force);
+			});
 	}
 
 	public function updateCreator($channelId)
@@ -58,7 +58,7 @@ class ChannelService {
 			return $this->source->getCreator($params);
 		});
 
-		return $result['items'];
+		return Channel::createFromItem($result['items']);
 	}
 
 }

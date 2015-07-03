@@ -3,16 +3,15 @@
 namespace Spectator\Services\Youtube;
 
 use Cache;
-use Spectator\Traits\YoutubeDataTransformerTrait;
+use Spectator\Datamodels\Playlist;
+use Spectator\Services\ApiService;
 use Spectator\Sources\YoutubeSource;
+use Illuminate\Support\Collection;
 
 set_time_limit(0);
 
-class PlaylistService {
+class PlaylistService extends ApiService {
 
-	use YoutubeDataTransformerTrait;
-
-	public $playlists = [];
 	private $source;
 
 	public function __construct(YoutubeSource $source)
@@ -20,22 +19,9 @@ class PlaylistService {
 		$this->source = $source;
 	}
 
-	public function getPlaylists(array $playlistIds, $force = false)
+	public function getPlaylists(Collection $playlistIds, $force = false)
 	{
-		if(count($playlistIds) === 0) {
-			return [];
-		}
-
-		$cumulativeResults = [];
-
-		$uniqueIds = array_unique($playlistIds, SORT_REGULAR);
-
-		foreach($uniqueIds as $playlistId)
-		{
-			$cumulativeResults = array_merge($cumulativeResults, $this->getPlaylist($playlistId, $force));
-		}
-
-		return $this->createData($cumulativeResults, 'createPlaylistItem');
+		return $this->getFromIds($playlistIds, 'getPlaylist', $force);
 	}
 
 	public function updatePlaylist($playlistId)
@@ -60,55 +46,40 @@ class PlaylistService {
 			return $this->source->getSeries($params);
 		});
 
-		return $results['items'];
+		return Playlist::createFromItem($results['items']);
 	}
 
 	public function searchPlaylists($query, $playlistsToGet, $force = false)
 	{
-		$page = 0;
-		$fetched = 0;
-		$pageToken = null;
-		$resultsToGet = $playlistsToGet > 0 ? $playlistsToGet : 10;
-		$resultsPerCall = $playlistsToGet < 50 ? $playlistsToGet : 50;
-		$cumulativeResults = [];
+		$chunk = $playlistsToGet > 50 ? 50 : $playlistsToGet;
+		$pager = new YoutubeApiPager($playlistsToGet, $chunk, true);
+		$results = collect([]);
 
-		for($i = 0; $i < $resultsToGet; $i += $resultsPerCall)
-		{
+		$pager->page(function($pager) use (&$results, $query, $force) {
 			$params = [
 				'type' => 'playlist',
-				'maxResults' => $resultsPerCall,
+				'maxResults' => $pager->getChunk(),
 				'part' => 'id, snippet',
-				'pageToken' => $pageToken,
+				'pageToken' => $pager->getToken(),
 				'q' => $query
 			];
 
-			$cacheKey = $query . ':playlists:' . $page;
+			$cacheKey = $query . ':playlists:' . $pager->getPage();
 
 			if($force === true) {
 				Cache::forget($cacheKey);
 			}
 
-			$results = Cache::remember($cacheKey, env('API_CACHE_MINUTES', 720), function() use ($params) {
+			$apiData = Cache::remember($cacheKey, env('API_CACHE_MINUTES', 720), function() use ($params) {
 				return $this->source->search($params);
 			});
 
-			$totalResults = $results['pageInfo']['totalResults'];
-			$fetched += $results['pageInfo']['resultsPerPage'];
-			$stuffLeft = $totalResults - $fetched;
-			$resultsPerCall = $stuffLeft < $resultsPerCall ? $stuffLeft : $resultsPerCall;
+			$results = $results->merge($apiData['items']);
 
-			$pageToken = $results['nextPageToken'];
+			return $apiData;
+		});
 
-			$cumulativeResults = array_merge($cumulativeResults, $results['items']);
-
-			$page++;
-
-			if($stuffLeft <= 0 || is_null($pageToken)) {
-				break;
-			}
-		}
-
-		return $this->createData($cumulativeResults, 'createPlaylistItem');
+		return Playlist::createFromCollection($results);
 	}
 
 }

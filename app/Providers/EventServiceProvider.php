@@ -13,9 +13,11 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'Spectator\Events\SomeEvent' => [
-            'Spectator\Listeners\EventListener',
-        ],
+
+    ];
+
+    protected $subscribe = [
+        'Spectator\Services\Youtube\YoutubeServiceManager'
     ];
 
     /**

@@ -3,96 +3,67 @@
 namespace Spectator\Repositories;
 
 use Spectator\Game;
+use Illuminate\Support\Collection;
 
 class YoutubeRepository {
 
-	private $videoRepo;
-	private $seriesRepo;
-	private $creatorRepo;
-
-	public function __construct(VideoRepository $videoRepo, SeriesRepository $seriesRepo, CreatorRepository $creatorRepo)
+	public function __construct()
 	{
-		$this->videoRepo = $videoRepo;
-		$this->seriesRepo = $seriesRepo;
-		$this->creatorRepo = $creatorRepo;
+	    //
 	}
 
 	public function saveAll(array $data, Game $assocGame)
 	{
-		$seriesModels = [];
+		$seriesModels = collect([]);
 
 		if(isset($data['series'])) {
-			$seriesModels = $this->saveSeries($data['series'], $assocGame);
+			$this->saveSeries($data['series'], $assocGame);
+			$seriesModels = $data['series'];
 		}
 
-		$videoModels = $this->saveVideos($data['videos'], $assocGame, $seriesModels);
-		$this->saveCreators($data['creators'], $videoModels);
+		$this->saveVideos($data['videos'], $assocGame, $seriesModels);
+		$this->saveCreators($data['creators'], $data['videos']);
 	}
 
-	public function saveSeries(array $data, Game $game)
+	public function saveSeries(Collection $data, Game $game)
 	{
-		$modelsAndData = [];
+		$data->each(function($item, $key) use ($game) {
 
-		foreach($data as $series) {
-			$model = $this->seriesRepo->createModel($series);
-			$model->game()->associate($game);
-			$model->save();
-
-			$modelsAndData[] = [
-				'model' => $model,
-				'data' => $series
-			];
-		}
-
-		return $modelsAndData;
+			$item->persist();
+			$item->relatesToGame($game);
+		});
 	}
 
-	public function saveVideos(array $data, Game $game, array $series = [])
+	public function saveVideos(Collection $data, Game $game, Collection $series = null)
 	{
-		$modelsAndData = [];
-		$playlistIds = empty($series) ? [] : array_column(array_column($series, 'data'), 'playlist_id');
+		$data->each(function($item, $key) use ($series, $game) {
+			$item->persist();
+			$item->relatesToGame($game);
 
-		foreach($data as $video) {
-			$model = $this->videoRepo->createModel($video);
+			if(!is_null($series) && !$series->isEmpty()) {
 
-			if(!empty($series)) {
-				$seriesModel = $series[array_search($video['playlist_id'], $playlistIds)]['model'];
-				$model->series()->detach($seriesModel->id);
-				$model->series()->attach($seriesModel->id);
+				$seriesIndex = $series->search(function($playlist, $key) use ($item) {
+                    return $item->playlist === $playlist->id;
+                });
+
+                $seriesModel = $series->get($seriesIndex);
+
+				$item->relatesToSeries($seriesModel->model);
 			}
-
-			$model->game()->associate($game);
-			$model->save();
-
-			$modelsAndData[] = [
-				'model' => $model,
-				'data' => $video
-			];
-		}
-
-		return $modelsAndData;
+		});
 	}
 
-	public function saveCreators(array $data, array $videos)
+	public function saveCreators(Collection $data, Collection $videos)
 	{
-		$modelsAndData = [];
-		$videoChannels = array_column(array_column($videos, 'data'), 'channel_id');
+		$data->each(function($item, $key) use ($videos) {
+			$item->persist();
 
-		foreach($data as $creator) {
-			$model = $this->creatorRepo->createModel($creator);
-
-			foreach(array_keys($videoChannels, $creator['channel_id']) as $videoKey) {
-				$videoModel = $videos[$videoKey]['model'];
-				$videoModel->creator()->associate($model->id);
-				$videoModel->save();
-			}
-
-			$modelsAndData[] = [
-				'model' => $model,
-				'data' => $creator
-			];
-		}
-
-		return $modelsAndData;
+			$videos->filter(function($video) use ($item) {
+				return $item->id === $video->channel;
+			})
+            ->each(function($video) use ($item) {
+                $video->relatesToCreator($item->model);
+            });
+		});
 	}
 }

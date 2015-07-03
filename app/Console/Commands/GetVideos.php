@@ -5,7 +5,7 @@ namespace Spectator\Console\Commands;
 use Spectator\Repositories\GameRepository;
 use Spectator\Repositories\VideoRepository;
 use Spectator\Repositories\YoutubeRepository;
-use Spectator\Services\Youtube\YoutubeResourcesManager;
+use Spectator\Services\Youtube\YoutubeServiceManager;
 use Illuminate\Console\Command;
 
 class GetVideos extends Command
@@ -15,7 +15,7 @@ class GetVideos extends Command
     private $gameRepo;
     private $youtubeRepo;
 
-    public function __construct(YoutubeRepository $youtube, YoutubeResourcesManager $api, GameRepository $gameRepo, VideoRepository $repo) {
+    public function __construct(YoutubeRepository $youtube, YoutubeServiceManager $api, GameRepository $gameRepo, VideoRepository $repo) {
         parent::__construct();
 
         $this->gameRepo = $gameRepo;

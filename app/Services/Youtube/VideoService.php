@@ -3,14 +3,14 @@
 namespace Spectator\Services\Youtube;
 
 use Cache;
-use Spectator\Traits\YoutubeDataTransformerTrait;
+use Spectator\Datamodels\Video;
+use Spectator\Services\ApiService;
 use Spectator\Sources\YoutubeSource;
+use Illuminate\Support\Collection;
 
 set_time_limit(0);
 
-class VideoService {
-
-	use YoutubeDataTransformerTrait;
+class VideoService extends ApiService {
 
 	private $source;
 
@@ -19,45 +19,34 @@ class VideoService {
 		$this->source = $source;
 	}
 
-	public function getVideosForPlaylists(array $playlistIds, $force = false)
+	public function getVideos(Collection $videoIds, $force = false)
 	{
-		if(count($playlistIds) === 0) {
-			return [];
-		}
-
-		$cumulativeResults = [];
-
-		$uniqueIds = array_unique($playlistIds, SORT_REGULAR);
-
-		foreach($uniqueIds as $playlistId)
-		{
-			$cumulativeResults = array_merge($cumulativeResults, $this->getVideosInPlaylist($playlistId, $force));
-		}
-
-		return $this->createData($cumulativeResults, 'createVideoItem');
+		return $this->getFromIds($videoIds, 'getVideo', $force);
 	}
 
-	public function getVideos(array $videoIds, $force = false)
+	public function getVideosForPlaylists(Collection $playlists, $force = false)
 	{
-		if(count($videoIds) === 0) {
-			return [];
+		if($playlists->isEmpty()) {
+			return $playlists;
 		}
 
-		$cumulativeResults = [];
+		$videos = collect([]);
 
-		$uniqueIds = array_unique($videoIds, SORT_REGULAR);
+		$playlistIds = $playlists
+			->map(function($item, $key) {
+				return $item->id;
+			})
+			->unique()
+			->each(function($item, $key) use (&$videos, $force) {
+				$videos = $this->getVideosInPlaylist($item, $force)->merge($videos->all());
+			});
 
-		foreach($uniqueIds as $videoId)
-		{
-			$cumulativeResults = array_merge($cumulativeResults, $this->getVideo($videoId, $force));
-		}
-
-		return $this->createData($cumulativeResults, 'createVideoItem');
+		return $videos;
 	}
 
-	public function getVideosBatch(array $videoIds, $cacheKey, $force = false)
+	public function getVideosBatch(Collection $videoIds, $cacheKey, $force = false)
 	{
-		$videoIdsString = implode($videoIds, ',');
+		$videoIdsString = $videoIds->implode(',');
 
 		$params = [
 			'maxResults' => 50,
@@ -72,7 +61,7 @@ class VideoService {
 			return $this->source->getVideo($params);
 		});
 
-		return $results['items'];
+		return Video::createFromCollection(collect($results['items']));
 	}
 
 	public function updateVideo($videoId)
@@ -97,15 +86,15 @@ class VideoService {
 			return $this->source->getVideo($params);
 		});
 
-		return $results['items'];
+		return Video::createFromItem($results['items']);
 	}
 
 	public function getVideosInPlaylist($playlistId, $force = false)
 	{
-		$pager = new YoutubeApiPager(50);
-		$cumulativeResults = [];
+		$pager = new YoutubeApiPager(50, 50, false);
+		$results = collect([]);
 
-		$pager->page(function($pager) use (&$cumulativeResults, $playlistId, $force) {
+		$pager->page(function($pager) use (&$results, $playlistId, $force) {
 
 			$params = [
 				'maxResults' => $pager->getChunk(),
@@ -123,30 +112,23 @@ class VideoService {
 				return $this->source->getVideosInSeries($params);
 			});
 
-			if(!empty($playlistItemResults['items'])) {
-				$videoIds = [];
+			$plItems = collect($playlistItemResults['items']);
+			$batchCacheKey = $playlistId . ':videos:batch:' . $pager->getPage();
 
-				foreach($playlistItemResults as $plItem) {
-					$videoIds[] = $plItem->snippet->resourceId->videoId;
-				}
+			$videoIds = $plItems
+				->map(function($item, $key) {
+					return $item->snippet->resourceId->videoId;
+				})->unique();
 
-				$batchCacheKey = $playlistId . ':videos:batch:' . $pager->getPage();
-
-				$videos = array_map(function($video) use ($playlistId) {
-					$video->snippet->playlistId = $playlistId;
-					return $video;
-				}, $this->getVideosBatch($videoIds, $batchCacheKey));
-
-				$cumulativeResults = array_merge(
-					$cumulativeResults,
-					$videos
-				);
-			}
+			$results = $this->getVideosBatch($videoIds, $batchCacheKey)
+				->each(function($item, $key) use ($playlistId) {
+					$item->playlist = $playlistId;
+				})->merge($results->all());
 
 			return $playlistItemResults;
 		});
 
-		return $cumulativeResults;
+		return $results;
 	}
 
 }
