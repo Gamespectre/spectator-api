@@ -14,6 +14,10 @@ class VideoService extends ApiService {
 
 	private $source;
 
+	public $actions = [
+		'playlists' => 'getVideosForPlaylists'
+	];
+
 	public function __construct(YoutubeSource $source)
 	{
 		$this->source = $source;

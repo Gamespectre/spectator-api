@@ -13,11 +13,13 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-
+        'Spectator\Events\Api\Youtube\PlaylistSearch' => [
+            'Spectator\Listeners\Api\Youtube\PlaylistSearchHandler'
+        ],
     ];
 
     protected $subscribe = [
-        'Spectator\Services\Youtube\YoutubeServiceManager'
+        //
     ];
 
     /**

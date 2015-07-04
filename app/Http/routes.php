@@ -5,6 +5,4 @@ Route::get('/', function() {
 });
 
 Route::controller('test', 'TestController');
-Route::controller('games', 'GameController');
 Route::controller('videos', 'VideoController');
-Route::controller('series', 'SeriesController');

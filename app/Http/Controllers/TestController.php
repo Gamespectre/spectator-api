@@ -6,30 +6,31 @@ use Illuminate\Http\Request;
 
 use Spectator\Http\Requests;
 use Spectator\Http\Controllers\Controller;
-
+use Spectator\Events\Api\Youtube\PlaylistSearch;
+use Spectator\Services\App\YoutubePackage;
 use Spectator\Repositories\GameRepository;
 use Spectator\Repositories\YoutubeRepository;
 use Spectator\Services\Youtube\YoutubeServiceManager;
 
 class TestController extends Controller
 {
-
+    /**
+     * @var GameRepository
+     */
     private $game;
-    private $manager;
-    private $youtubeRepo;
 
-    public function __construct(YoutubeServiceManager $manager, GameRepository $game, YoutubeRepository $youtubeRepo)
+    public function __construct(GameRepository $game)
     {
         $this->game = $game;
-        $this->manager = $manager;
-        $this->youtubeRepo = $youtubeRepo;
     }
 
     public function getGameContent($gameId)
     {
         $game = $this->game->get($gameId);
-        $data = $this->manager->searchYoutubeContent($game->title . " lets play");
-        $this->youtubeRepo->saveAll($data, $game);
+
+        \Event::fire(new PlaylistSearch([
+            'game' => $game
+        ]));
     }
 
     public function getAddPlaylist($playlistId, $gameId)

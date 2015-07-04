@@ -11,16 +11,14 @@ use Illuminate\Console\Command;
 class GetVideos extends Command
 {
     private $repo;
-    private $api;
     private $gameRepo;
     private $youtubeRepo;
 
-    public function __construct(YoutubeRepository $youtube, YoutubeServiceManager $api, GameRepository $gameRepo, VideoRepository $repo) {
+    public function __construct(YoutubeRepository $youtube, GameRepository $gameRepo, VideoRepository $repo) {
         parent::__construct();
 
         $this->gameRepo = $gameRepo;
         $this->youtubeRepo = $youtube;
-        $this->api = $api;
         $this->repo = $repo;
     }
     /**
@@ -46,10 +44,11 @@ class GetVideos extends Command
     {
         $gameId = (int) $this->argument('game');
         $game = $this->gameRepo->get($gameId);
-        $data = $this->api->searchYoutubeContent($game->title . " lets play", 5, $this->option('force'));
+        /*$data = $this->api->searchYoutubeContent($game->title . " lets play", 5, $this->option('force'));
 
         $this->youtubeRepo->saveAll($data, $game);
 
         $this->info('Saved fresh data.');
+        */
     }
 }

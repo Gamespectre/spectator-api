@@ -2,6 +2,8 @@
 
 namespace Spectator\Services;
 
+use Spectator\Game;
+use Spectator\Services\App\Package;
 use Illuminate\Support\Collection;
 
 abstract class ApiService {

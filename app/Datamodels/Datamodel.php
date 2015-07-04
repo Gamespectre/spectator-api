@@ -14,8 +14,6 @@ abstract class Datamodel {
 		if(!empty($data)) {
 			$this->create($data);
 		}
-
-        $this->getUniqueModel();
 	}
 
 	public function create($data)
@@ -25,7 +23,10 @@ abstract class Datamodel {
         }
 
 		$this->_internalData = collect($this->transform($data));
-		return $this;
+
+        $this->getUniqueModel();
+
+        return $this;
 	}
 
 	public static function createFromItem($data) {
@@ -101,8 +102,14 @@ abstract class Datamodel {
         if($this->_internalData->has($prop)) {
             $item = $this->_internalData->get($prop);
             $dbColumn = isset($item[1]) ? $item[1] : $item[0];
+
             $this->_internalData->put($prop, [$value, $dbColumn]);
         }
+	}
+
+	public function __toString()
+	{
+		return $this->_internalData->put("model", $this->model)->toJson();
 	}
 
 	abstract public function transform($raw);

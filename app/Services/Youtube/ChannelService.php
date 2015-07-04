@@ -14,6 +14,10 @@ class ChannelService extends ApiService {
 
 	private $source;
 
+	public $actions = [
+		'videos' => 'getCreatorsForVideos'
+	];
+
 	public function __construct(YoutubeSource $source)
 	{
 		$this->source = $source;

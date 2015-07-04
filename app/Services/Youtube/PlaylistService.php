@@ -14,6 +14,10 @@ class PlaylistService extends ApiService {
 
 	private $source;
 
+    public $actions = [
+        'search' => 'searchPlaylists'
+    ];
+
 	public function __construct(YoutubeSource $source)
 	{
 		$this->source = $source;
