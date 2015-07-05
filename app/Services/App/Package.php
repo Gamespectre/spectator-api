@@ -57,6 +57,13 @@ abstract class Package implements \JsonSerializable {
         });
     }
 
+    public function checkDone()
+    {
+        return $this->services->filter(function($item) {
+            return $item->getData() !== false;
+        })->count() === $this->services->count();
+    }
+
     public static function create(array $data)
     {
         $package = new static($data);
@@ -67,7 +74,7 @@ abstract class Package implements \JsonSerializable {
     {
         return $this->services->map(function($item, $key) {
             return $item->getData();
-        })->merge($this->_params->all())->toJson();
+        })->merge($this->_params->all());
     }
 
     public function __toString()

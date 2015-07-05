@@ -4,6 +4,7 @@ namespace Spectator\Services\Youtube;
 
 use Cache;
 use Spectator\Datamodels\Playlist;
+use Spectator\Events\Api\Youtube\Playlists\PlaylistsRetrieved;
 use Spectator\Interfaces\PackageHandler;
 use Spectator\Traits\PackagesData;
 use Spectator\Services\ApiService;
@@ -17,6 +18,7 @@ class PlaylistService extends ApiService implements PackageHandler {
     use PackagesData;
 
 	private $source;
+    protected $event = PlaylistsRetrieved::class;
 
     public $actions = [
         'search' => 'searchPlaylists'
@@ -29,12 +31,16 @@ class PlaylistService extends ApiService implements PackageHandler {
 
 	public function getPlaylists(Collection $playlistIds, $force = false)
 	{
-		return $this->getFromIds($playlistIds, 'getPlaylist', $force);
-	}
+		$playlists = $this->getFromIds($playlistIds, 'getPlaylist', $force);
+
+        return $playlists;
+    }
 
 	public function updatePlaylist($playlistId)
 	{
-		return $this->getPlaylist($playlistId, true);
+		$playlist = $this->getPlaylist($playlistId, true);
+
+        return $playlist;
 	}
 
 	public function getPlaylist($playlistId, $force = false)

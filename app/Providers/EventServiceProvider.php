@@ -16,10 +16,14 @@ class EventServiceProvider extends ServiceProvider
         'Spectator\Events\Api\Youtube\Search' => [
             'Spectator\Listeners\Api\Youtube\SearchHandler'
         ],
+        'Spectator\Events\Api\PackageDone' => [
+            'Spectator\Listeners\Api\PackageDoneHandler'
+        ],
     ];
 
     protected $subscribe = [
-        //
+        'Spectator\Services\Youtube\VideoService',
+        'Spectator\Services\Youtube\ChannelService',
     ];
 
     /**

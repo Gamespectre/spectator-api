@@ -4,6 +4,7 @@ namespace Spectator\Services\Youtube;
 
 use Cache;
 use Spectator\Datamodels\Video;
+use Spectator\Events\Api\Youtube\Videos\VideosRetrieved;
 use Spectator\Interfaces\PackageHandler;
 use Spectator\Services\ApiService;
 use Spectator\Sources\YoutubeSource;
@@ -17,6 +18,7 @@ class VideoService extends ApiService implements PackageHandler {
 	use PackagesData;
 
 	private $source;
+    protected $event = VideosRetrieved::class;
 
 	public $actions = [
 		'playlists' => 'getVideosForPlaylists'
@@ -26,6 +28,14 @@ class VideoService extends ApiService implements PackageHandler {
 	{
 		$this->source = $source;
 	}
+
+    public function subscribe($events)
+    {
+        $events->listen(
+            'Spectator\Events\Api\Youtube\Playlists\PlaylistsRetrieved',
+            'video@packEventPackage'
+        );
+    }
 
 	public function getVideos(Collection $videoIds, $force = false)
 	{

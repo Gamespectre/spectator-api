@@ -1,28 +1,28 @@
 <?php
 
-namespace Spectator\Events\Api\Youtube;
+namespace Spectator\Events\Api\Youtube\Videos;
 
 use Spectator\Events\Event;
-use Illuminate\Support\Collection;
 use Illuminate\Queue\SerializesModels;
+use Spectator\Services\App\Package;
 
-class PlaylistsRetrieved extends Event
+class VideosRetrieved extends Event
 {
     use SerializesModels;
 
     /**
      * @var Collection
      */
-    public $videos;
+    public $data;
 
     /**
      * Create a new event instance.
      *
-     * @param Collection $videos
+     * @param Collection $data
      */
-    public function __construct(Collection $videos)
+    public function __construct(Package $data)
     {
-        $this->videos = $videos;
+        $this->data = $data;
     }
 
     /**

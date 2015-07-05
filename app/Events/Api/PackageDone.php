@@ -5,19 +5,25 @@ namespace Spectator\Events\Api;
 use Spectator\Events\Event;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Spectator\Services\App\Package;
 
 class PackageDone extends Event
 {
     use SerializesModels;
 
     /**
+     * @var Package
+     */
+    public $package;
+
+    /**
      * Create a new event instance.
      *
-     * @return void
+     * @param Package $package
      */
-    public function __construct()
+    public function __construct(Package $package)
     {
-        //
+        $this->package = $package;
     }
 
     /**

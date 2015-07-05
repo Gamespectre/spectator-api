@@ -109,7 +109,7 @@ abstract class Datamodel implements \JsonSerializable {
 
     public function serialize()
     {
-        return $this->_internalData->put("model", $this->model)->toJson();
+        return $this->_internalData->put("model", $this->model);
 	}
 
 	public function jsonSerialize()
