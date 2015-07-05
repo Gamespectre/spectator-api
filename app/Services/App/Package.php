@@ -2,9 +2,11 @@
 
 namespace Spectator\Services\App;
 
-use Spectator\Services\App\PackageService;
+use Illuminate\Support\Collection;
+use Spectator\Exceptions\PackageRequiredParamException;
+use Spectator\Exceptions\ServiceUnboundException;
 
-abstract class Package {
+abstract class Package implements \JsonSerializable {
 
     protected $_params;
     protected $services;
@@ -17,35 +19,42 @@ abstract class Package {
         }
     }
 
-    public function addService($name, $props)
+    public function addService($name, array $props)
     {
-        $this->services->put($name, [
-            'service' => PackageService::create(
-                $name,
-                $props['action']
-            ),
-            'args' => collect($props['args'])
-        ]);
-    }
+        if(\App::bound($name)) {
+            $service = \App::make($name);
+            $args = collect($props['args']);
+            $method = $service->actions[$props['action']];
 
-    public function execService($name)
-    {
-        $serviceItem = $this->services->get($name);
-
-        if(is_null($serviceItem)) {
-            return false;
+            $service->setPackageData($name, $method, $args);
+            $this->services->put($name, $service);
         }
-
-        $args = $serviceItem['args']->map(function($item, $key) {
-            return $this->getArg($item);
-        });
-
-        $serviceItem['service']->execute($args->all());
+        else throw new ServiceUnboundException(
+            "Service '" . $name . "'' is not found in the service container!"
+        );
     }
 
-    public function __get($name)
+    public function trigger($serviceName)
     {
-        return $this->_params->get($name);
+        if($this->services->has($serviceName))
+        {
+            $this->services->get($serviceName)->pack($this);
+        }
+        else throw new ServiceUnboundException(
+            "Service '" . $name . "'' is not found in this package!"
+        );
+    }
+
+    public function getArgs(Collection $args)
+    {
+        return $args->map(function($arg, $key) {
+
+            if($this->_params->has($arg)) {
+                return $this->_params->get($arg);
+            }
+
+            return $this->getDependency($arg);
+        });
     }
 
     public static function create(array $data)
@@ -54,35 +63,51 @@ abstract class Package {
         return $package;
     }
 
-    private function getArg($arg)
+    public function serialize()
     {
-        if($this->_params->has($arg)) {
-            return $this->_params->get($arg);
-        }
+        return $this->services->map(function($item, $key) {
+            return $item->getData();
+        })->merge($this->_params->all())->toJson();
+    }
 
-        return $this->getDependency($arg);
+    public function __toString()
+    {
+        return $this->serialize();
+    }
+
+    public function __sleep()
+    {
+        return ["_params", "services"];
+    }
+
+    public function jsonSerialize()
+    {
+        return $this->serialize();
+    }
+
+    private function checkRequiredParams($args)
+    {
+        collect($this->requiredParams)->each(function($item, $key) use ($args) {
+            if(!$args->has($item)) {
+                throw new PackageRequiredParamException(
+                    "The package requires the '" . $item . "' parameter!"
+                );
+            }
+        });
     }
 
     private function getDependency($name)
     {
         if($this->services->has($name)) {
-            return $this->services->get($name)['service']->getData();
+            return $this->services->get($name)->getData();
         }
     }
 
     protected function setData(array $data)
     {
-        $params = collect($data);
-
-        collect($this->requiredParams)->each(function($item, $key) use ($params) {
-            if(!$params->has($item)) {
-                throw new Spectator\Exceptions\PackageRequiredParamException(
-                    "The " . $item . " parameter is required!"
-                );
-            }
-        });
-
-        $this->_params = $params;
+        $this->_params = collect($data);
         $this->services = collect([]);
+
+        $this->checkRequiredParams($this->_params);
     }
 }

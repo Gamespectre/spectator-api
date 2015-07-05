@@ -4,13 +4,17 @@ namespace Spectator\Services\Youtube;
 
 use Cache;
 use Spectator\Datamodels\Channel;
+use Spectator\Interfaces\PackageHandler;
 use Spectator\Services\ApiService;
 use Spectator\Sources\YoutubeSource;
 use Illuminate\Support\Collection;
+use Spectator\Traits\PackagesData;
 
 set_time_limit(0);
 
-class ChannelService extends ApiService {
+class ChannelService extends ApiService implements PackageHandler {
+
+    use PackagesData;
 
 	private $source;
 
@@ -30,7 +34,7 @@ class ChannelService extends ApiService {
 
 	public function getCreatorsForVideos(Collection $videos, $force = false)
 	{
-		return $videos
+		$creators = $videos
 			->map(function($video) {
 				return $video->channel;
 			})
@@ -38,6 +42,10 @@ class ChannelService extends ApiService {
 			->map(function($item, $key) use ($force) {
 				return $this->getCreator($item, $force);
 			});
+
+
+
+		return $creators;
 	}
 
 	public function updateCreator($channelId)

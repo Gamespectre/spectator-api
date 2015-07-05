@@ -3,23 +3,23 @@
 namespace Spectator\Events\Api\Youtube;
 
 use Spectator\Events\Event;
-use Spectator\Datamodels\Channel;
+use Illuminate\Support\Collection;
 use Illuminate\Queue\SerializesModels;
 
-class ChannelRetrieved extends Event
+class PlaylistsRetrieved extends Event
 {
     use SerializesModels;
 
-    public $channel;
+    public $playlists;
 
     /**
      * Create a new event instance.
      *
-     * @return void
+     * @param Collection $playlists
      */
-    public function __construct(Channel $channel)
+    public function __construct(Collection $playlists)
     {
-        $this->channel = $channel;
+        $this->playlists = $playlists;
     }
 
     /**

@@ -4,13 +4,17 @@ namespace Spectator\Services\Youtube;
 
 use Cache;
 use Spectator\Datamodels\Video;
+use Spectator\Interfaces\PackageHandler;
 use Spectator\Services\ApiService;
 use Spectator\Sources\YoutubeSource;
 use Illuminate\Support\Collection;
+use Spectator\Traits\PackagesData;
 
 set_time_limit(0);
 
-class VideoService extends ApiService {
+class VideoService extends ApiService implements PackageHandler {
+
+	use PackagesData;
 
 	private $source;
 
@@ -36,8 +40,8 @@ class VideoService extends ApiService {
 
 		$videos = collect([]);
 
-		$playlistIds = $playlists
-			->map(function($item, $key) {
+		$playlists
+            ->map(function($item, $key) {
 				return $item->id;
 			})
 			->unique()

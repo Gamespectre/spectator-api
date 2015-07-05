@@ -6,8 +6,7 @@ use Illuminate\Http\Request;
 
 use Spectator\Http\Requests;
 use Spectator\Http\Controllers\Controller;
-use Spectator\Events\Api\Youtube\PlaylistSearch;
-use Spectator\Services\App\YoutubePackage;
+use Spectator\Events\Api\Youtube\Search;
 use Spectator\Repositories\GameRepository;
 use Spectator\Repositories\YoutubeRepository;
 use Spectator\Services\Youtube\YoutubeServiceManager;
@@ -28,7 +27,7 @@ class TestController extends Controller
     {
         $game = $this->game->get($gameId);
 
-        \Event::fire(new PlaylistSearch([
+        \Event::fire(new Search([
             'game' => $game
         ]));
     }

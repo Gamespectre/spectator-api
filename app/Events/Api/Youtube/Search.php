@@ -5,7 +5,7 @@ namespace Spectator\Events\Api\Youtube;
 use Spectator\Events\Event;
 use Illuminate\Queue\SerializesModels;
 
-class PlaylistSearch extends Event
+class Search extends Event
 {
     use SerializesModels;
 

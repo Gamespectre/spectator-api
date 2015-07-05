@@ -1,6 +1,6 @@
 <?php
 
-namespace Spectator\Events;
+namespace Spectator\Events\Api;
 
 use Spectator\Events\Event;
 use Illuminate\Queue\SerializesModels;

@@ -4,13 +4,17 @@ namespace Spectator\Services\Youtube;
 
 use Cache;
 use Spectator\Datamodels\Playlist;
+use Spectator\Interfaces\PackageHandler;
+use Spectator\Traits\PackagesData;
 use Spectator\Services\ApiService;
 use Spectator\Sources\YoutubeSource;
 use Illuminate\Support\Collection;
 
 set_time_limit(0);
 
-class PlaylistService extends ApiService {
+class PlaylistService extends ApiService implements PackageHandler {
+
+    use PackagesData;
 
 	private $source;
 

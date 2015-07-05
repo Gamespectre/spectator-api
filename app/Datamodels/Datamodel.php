@@ -4,7 +4,7 @@ namespace Spectator\Datamodels;
 
 use Illuminate\Support\Collection;
 
-abstract class Datamodel {
+abstract class Datamodel implements \JsonSerializable {
 
 	public $model = false;
 	protected $_internalData = [];
@@ -107,10 +107,25 @@ abstract class Datamodel {
         }
 	}
 
-	public function __toString()
-	{
-		return $this->_internalData->put("model", $this->model)->toJson();
+    public function serialize()
+    {
+        return $this->_internalData->put("model", $this->model)->toJson();
 	}
+
+	public function jsonSerialize()
+	{
+		return $this->serialize();
+	}
+
+    public function __toString()
+    {
+        return $this->serialize();
+    }
+
+    public function __sleep()
+    {
+        return ["model", "_internalData"];
+    }
 
 	abstract public function transform($raw);
 }
