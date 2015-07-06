@@ -141,6 +141,7 @@ return [
          * Application Service Providers...
          */
         Barryvdh\Debugbar\ServiceProvider::class,
+        Barryvdh\LaravelIdeHelper\IdeHelperServiceProvider::class,
         Spectator\Providers\AppServiceProvider::class,
         Spectator\Providers\EventServiceProvider::class,
         Spectator\Providers\RouteServiceProvider::class,

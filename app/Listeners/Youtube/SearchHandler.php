@@ -1,13 +1,10 @@
 <?php
 
-namespace Spectator\Listeners\Api\Youtube;
+namespace Spectator\Listeners\Youtube;
 
-use Spectator\Events\Api\Youtube\Search;
+use Spectator\Events\Youtube\Search;
 use Spectator\Services\App\YoutubePackage;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Spectator\Services\Youtube\SearchService;
-use Spectator\Services\Youtube\PlaylistService;
 
 class SearchHandler
 {
@@ -19,7 +16,6 @@ class SearchHandler
     /**
      * Create the event listener.
      * @param SearchService $search
-     * @param PackageManager $manager
      */
     public function __construct(SearchService $search)
     {
@@ -28,7 +24,7 @@ class SearchHandler
 
     /**
      * Handle the event.
-     * @param PlaylistSearch $event
+     * @param Search $event
      */
     public function handle(Search $event)
     {
@@ -60,6 +56,6 @@ class SearchHandler
         ]);
 
         // Trigger the first service. The rest will follow through event cascading.
-        $package->trigger('playlist');
+        $package->packNext();
     }
 }

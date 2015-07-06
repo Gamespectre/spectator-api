@@ -2,11 +2,11 @@
 
 namespace Spectator\Datamodels;
 
+use Carbon\Carbon;
 use Spectator\Creator;
+use Spectator\Game;
 use Spectator\Series;
 use Spectator\Video as VideoModel;
-use Spectator\Game;
-use Carbon\Carbon;
 
 class Video extends Datamodel {
 

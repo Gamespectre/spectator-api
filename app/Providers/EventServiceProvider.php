@@ -13,17 +13,30 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
-        'Spectator\Events\Api\Youtube\Search' => [
-            'Spectator\Listeners\Api\Youtube\SearchHandler'
+        // Search
+        'Spectator\Events\Game\Search' => [
+            'Spectator\Listeners\Game\SearchHandler'
         ],
-        'Spectator\Events\Api\PackageDone' => [
-            'Spectator\Listeners\Api\PackageDoneHandler'
+        'Spectator\Events\Youtube\Search' => [
+            'Spectator\Listeners\Youtube\SearchHandler'
         ],
-    ];
 
-    protected $subscribe = [
-        'Spectator\Services\Youtube\VideoService',
-        'Spectator\Services\Youtube\ChannelService',
+        // Resources
+        'Spectator\Events\Game\GameRetrieved' => [
+            'Spectator\Listeners\Game\GamesHandler'
+        ],
+        'Spectator\Events\PackageDone' => [
+            'Spectator\Listeners\PackageDoneHandler'
+        ],
+        'Spectator\Events\Youtube\PlaylistsRetrieved' => [
+            'Spectator\Listeners\Youtube\PlaylistsHandler'
+        ],
+        'Spectator\Events\Youtube\VideosRetrieved' => [
+            'Spectator\Listeners\Youtube\VideosHandler'
+        ],
+        'Spectator\Events\Youtube\ChannelsRetrieved' => [
+            'Spectator\Listeners\Youtube\ChannelsHandler'
+        ],
     ];
 
     /**

@@ -3,7 +3,6 @@
 namespace Spectator\Http\Controllers;
 
 use Illuminate\Http\Response as IlluminateResponse;
-use Illuminate\Database\Eloquent\Collection;
 
 class ApiController extends Controller
 {

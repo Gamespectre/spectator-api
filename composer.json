@@ -13,9 +13,9 @@
         "giantbomb/giantbomb-php-api": "dev-master",
         "nesbot/carbon": "^1.20",
         "barryvdh/laravel-debugbar": "^2.0@dev",
-        "madcoda/php-youtube-api": "dev-master",
         "predis/predis": "^1.1@dev",
-        "laravel/homestead": "dev-master"
+        "laravel/homestead": "dev-master",
+        "barryvdh/laravel-ide-helper": "^2.0@dev"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
@@ -45,6 +45,8 @@
             "php artisan clear-compiled"
         ],
         "post-update-cmd": [
+            "php artisan clear-compiled",
+            "php artisan ide-helper:generate",
             "php artisan optimize"
         ],
         "post-root-package-install": [

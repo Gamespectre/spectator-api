@@ -2,10 +2,10 @@
 
 namespace Spectator\Http\Controllers\Auth;
 
+use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Spectator\Http\Controllers\Controller;
 use Spectator\User;
 use Validator;
-use Spectator\Http\Controllers\Controller;
-use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
 class AuthController extends Controller
 {

@@ -2,9 +2,9 @@
 
 namespace Spectator\Sources;
 
+use Google_Service_YouTube;
 use Spectator\Interfaces\VideoSourceInterface;
 use Spectator\Traits\YoutubeClientTrait;
-use Google_Service_YouTube;
 
 class YoutubeSource implements VideoSourceInterface {
 

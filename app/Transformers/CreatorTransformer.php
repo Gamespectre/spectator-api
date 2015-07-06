@@ -3,7 +3,6 @@
 namespace Spectator\Transformers;
 
 use League\Fractal\TransformerAbstract;
-use Illuminate\Database\Eloquent\Collection;
 use Spectator\Creator;
 
 class CreatorTransformer extends TransformerAbstract {

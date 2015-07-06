@@ -2,9 +2,9 @@
 
 namespace Spectator\Console\Commands;
 
-use Spectator\Sources\GiantBombSource;
-use Spectator\Repositories\GameRepository;
 use Illuminate\Console\Command;
+use Spectator\Repositories\GameRepository;
+use Spectator\Sources\GiantBombSource;
 
 class GetGame extends Command
 {
@@ -22,7 +22,7 @@ class GetGame extends Command
      *
      * @var string
      */
-    protected $signature = 'spectator:create:game {query}';
+    protected $signature = 'spectator:get:game {query}';
 
     /**
      * The console command description.

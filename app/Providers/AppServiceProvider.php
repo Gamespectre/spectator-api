@@ -23,8 +23,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        $this->app->singleton('playlist', 'Spectator\Services\Youtube\PlaylistService');
-        $this->app->singleton('video', 'Spectator\Services\Youtube\VideoService');
-        $this->app->singleton('channel', 'Spectator\Services\Youtube\ChannelService');
+        $this->app->bind('playlist', 'Spectator\Services\Youtube\PlaylistService');
+        $this->app->bind('video', 'Spectator\Services\Youtube\VideoService');
+        $this->app->bind('channel', 'Spectator\Services\Youtube\ChannelService');
+        $this->app->bind('game', 'Spectator\Services\Game\GameService');
     }
 }

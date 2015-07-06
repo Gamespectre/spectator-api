@@ -1,10 +1,9 @@
 <?php
 
-namespace Spectator\Events\Api;
+namespace Spectator\Events;
 
-use Spectator\Events\Event;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Spectator\Events\Event;
 use Spectator\Services\App\Package;
 
 class PackageDone extends Event
@@ -14,16 +13,16 @@ class PackageDone extends Event
     /**
      * @var Package
      */
-    public $package;
+    public $data;
 
     /**
      * Create a new event instance.
      *
-     * @param Package $package
+     * @param Package $data
      */
-    public function __construct(Package $package)
+    public function __construct(Package $data)
     {
-        $this->package = $package;
+        $this->data = $data;
     }
 
     /**

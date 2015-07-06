@@ -2,14 +2,11 @@
 
 namespace Spectator\Http\Controllers;
 
-use Spectator\Repositories\VideoRepository;
-use Spectator\Transformers\VideoTransformer;
-use Spectator\Traits\FractalDataTrait;
-use Spectator\Services\Youtube\YoutubeResourcesManager;
-use Spectator\Repositories\GameRepository;
-
 use Illuminate\Http\Request;
 use League\Fractal\Manager;
+use Spectator\Repositories\VideoRepository;
+use Spectator\Traits\FractalDataTrait;
+use Spectator\Transformers\VideoTransformer;
 
 class VideoController extends ApiController {
 

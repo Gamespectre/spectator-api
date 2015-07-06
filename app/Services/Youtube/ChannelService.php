@@ -3,12 +3,12 @@
 namespace Spectator\Services\Youtube;
 
 use Cache;
+use Illuminate\Support\Collection;
 use Spectator\Datamodels\Channel;
-use Spectator\Events\Api\Youtube\Channels\ChannelsRetrieved;
+use Spectator\Events\Youtube\ChannelsRetrieved;
 use Spectator\Interfaces\PackageHandler;
 use Spectator\Services\ApiService;
 use Spectator\Sources\YoutubeSource;
-use Illuminate\Support\Collection;
 use Spectator\Traits\PackagesData;
 
 set_time_limit(0);
@@ -28,14 +28,6 @@ class ChannelService extends ApiService implements PackageHandler {
 	{
 		$this->source = $source;
 	}
-
-    public function subscribe($events)
-    {
-        $events->listen(
-            'Spectator\Events\Api\Youtube\Videos\VideosRetrieved',
-            'channel@packEventPackage'
-        );
-    }
 
 	public function getCreators(Collection $channelIds, $force = false)
 	{

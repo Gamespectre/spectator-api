@@ -1,15 +1,18 @@
 <?php
 
-namespace Spectator\Events\Api\Youtube\Channels;
+namespace Spectator\Events\Game;
 
 use Spectator\Events\Event;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Spectator\Services\App\Package;
 
-class ChannelsRetrieved extends Event
+class GameRetrieved extends Event
 {
     use SerializesModels;
-
+    /**
+     * @var Package
+     */
     public $data;
 
     /**

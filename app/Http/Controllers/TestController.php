@@ -2,14 +2,12 @@
 
 namespace Spectator\Http\Controllers;
 
-use Illuminate\Http\Request;
-
+use Spectator\Events\Game\Search as GameSearch;
+use Spectator\Events\Youtube\Search as YoutubeSearch;
 use Spectator\Http\Requests;
-use Spectator\Http\Controllers\Controller;
-use Spectator\Events\Api\Youtube\Search;
 use Spectator\Repositories\GameRepository;
-use Spectator\Repositories\YoutubeRepository;
 use Spectator\Services\Youtube\YoutubeServiceManager;
+use Spectator\Sources\GiantBombSource;
 
 class TestController extends Controller
 {
@@ -17,17 +15,29 @@ class TestController extends Controller
      * @var GameRepository
      */
     private $game;
+    /**
+     * @var GiantBombSource
+     */
+    private $source;
 
-    public function __construct(GameRepository $game)
+    public function __construct(GameRepository $game, GiantBombSource $source)
     {
         $this->game = $game;
+        $this->source = $source;
+    }
+
+    public function getAddGame($query)
+    {
+        \Event::fire(new GameSearch([
+            'gameApiId' => $query
+        ]));
     }
 
     public function getGameContent($gameId)
     {
         $game = $this->game->get($gameId);
 
-        \Event::fire(new Search([
+        \Event::fire(new YoutubeSearch([
             'game' => $game
         ]));
     }

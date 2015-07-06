@@ -1,15 +1,17 @@
 <?php
 
-namespace Spectator\Listeners\Api;
+namespace Spectator\Listeners\Youtube;
 
-use Spectator\Events\Api\PackageDone;
+use Spectator\Events\Youtube\PlaylistsRetrieved;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class PackageDoneHandler
+class PlaylistsHandler
 {
     /**
      * Create the event listener.
+     *
+     * @return void
      */
     public function __construct()
     {
@@ -19,11 +21,11 @@ class PackageDoneHandler
     /**
      * Handle the event.
      *
-     * @param  PackageDone  $event
+     * @param  PlaylistsRetrieved  $event
      * @return void
      */
-    public function handle(PackageDone $event)
+    public function handle(PlaylistsRetrieved $event)
     {
-        dd(json_encode($event->package));
+        $event->data->packNext();
     }
 }

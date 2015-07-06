@@ -2,8 +2,8 @@
 
 namespace Spectator\Http\Controllers\Auth;
 
-use Spectator\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\ResetsPasswords;
+use Spectator\Http\Controllers\Controller;
 
 class PasswordController extends Controller
 {

@@ -2,9 +2,11 @@
 
 namespace Spectator\Repositories;
 
+use Carbon\Carbon;
+use Illuminate\Support\Collection;
 use Spectator\Game;
 use Spectator\Interfaces\RepositoryInterface;
-use Carbon\Carbon;
+use Spectator\Services\App\Package;
 
 class GameRepository implements RepositoryInterface {
 
@@ -44,18 +46,10 @@ class GameRepository implements RepositoryInterface {
 		return $game;
 	}
 
-	public function createModel($data) {
-		$properties = [
-			'title' => $data->getName(),
-			'api_id' => $data->getId(),
-			'description' => $data->getDeck(),
-			'franchise' => $data->getFranchises()[0]['name'],
-			'year' => Carbon::parse($data->getOriginalReleaseDate())->year,
-			'rating' => $data->getOriginalGameRating()[0]['name'],
-			'image_url' => $data->getImage()['super_url'],
-		];
-
-		$model = Game::firstOrCreate($properties);
-		return $model;
-	}
+    public function saveGames(Collection $gameData)
+    {
+        $gameData->each(function($data, $key) {
+            $data->persist();
+        });
+    }
 }

@@ -2,11 +2,11 @@
 
 namespace Spectator\Console\Commands;
 
+use Illuminate\Console\Command;
 use Spectator\Repositories\GameRepository;
 use Spectator\Repositories\VideoRepository;
 use Spectator\Repositories\YoutubeRepository;
 use Spectator\Services\Youtube\YoutubeServiceManager;
-use Illuminate\Console\Command;
 
 class GetVideos extends Command
 {

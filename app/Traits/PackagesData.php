@@ -3,17 +3,15 @@
 namespace Spectator\Traits;
 
 use Illuminate\Support\Collection;
-use Spectator\Events\Api\PackageDone;
-use Spectator\Events\Api\Youtube\Playlists\PlaylistsRetrieved;
-use Spectator\Events\Event;
+use Spectator\Events\PackageDone;
 use Spectator\Services\App\Package;
 
 trait PackagesData
 {
     protected $package;
-    private $name;
+    public $name;
     private $method;
-    private $args;
+    public $args;
     private $data = false;
 
     public function pack(Package $package)

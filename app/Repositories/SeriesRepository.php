@@ -2,10 +2,8 @@
 
 namespace Spectator\Repositories;
 
-use Spectator\Video;
-use Spectator\Series;
-use Spectator\Creator;
 use Spectator\Interfaces\RepositoryInterface;
+use Spectator\Series;
 
 class SeriesRepository implements RepositoryInterface {
 

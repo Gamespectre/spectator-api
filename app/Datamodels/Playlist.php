@@ -2,9 +2,9 @@
 
 namespace Spectator\Datamodels;
 
-use Spectator\Series;
-use Spectator\Game;
 use Carbon\Carbon;
+use Spectator\Game;
+use Spectator\Series;
 
 class Playlist extends Datamodel {
 

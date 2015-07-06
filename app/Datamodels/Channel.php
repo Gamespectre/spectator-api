@@ -2,18 +2,13 @@
 
 namespace Spectator\Datamodels;
 
-use Spectator\Creator;
 use Carbon\Carbon;
+use Spectator\Creator;
 
 class Channel extends Datamodel {
 
 	public $uniqueKey = 'channel_id';
 	protected $modelClass = Creator::class;
-
-	public function __construct($data)
-	{
-		parent::__construct($data);
-	}
 
 	public function transform($raw)
 	{

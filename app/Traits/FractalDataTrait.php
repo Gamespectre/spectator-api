@@ -2,11 +2,11 @@
 
 namespace Spectator\Traits;
 
-use League\Fractal\TransformerAbstract;
+use Illuminate\Database\Eloquent\Collection as DbCollection;
+use Illuminate\Database\Eloquent\Model;
 use League\Fractal\Resource\Collection;
 use League\Fractal\Resource\Item;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Collection as DbCollection;
+use League\Fractal\TransformerAbstract;
 
 trait FractalDataTrait {
 

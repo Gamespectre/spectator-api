@@ -1,18 +1,14 @@
 <?php
 
-namespace Spectator\Events\Api\Youtube\Videos;
+namespace Spectator\Events\Youtube;
 
-use Spectator\Events\Event;
 use Illuminate\Queue\SerializesModels;
-use Spectator\Services\App\Package;
+use Spectator\Events\Event;
 
-class VideosRetrieved extends Event
+class Search extends Event
 {
     use SerializesModels;
 
-    /**
-     * @var Collection
-     */
     public $data;
 
     /**
@@ -20,7 +16,7 @@ class VideosRetrieved extends Event
      *
      * @param Collection $data
      */
-    public function __construct(Package $data)
+    public function __construct($data)
     {
         $this->data = $data;
     }

@@ -6,6 +6,8 @@ use Illuminate\Support\Collection;
 
 abstract class Datamodel implements \JsonSerializable {
 
+	protected $modelClass = null;
+	public $uniqueKey = null;
 	public $model = false;
 	protected $_internalData = [];
 
@@ -24,7 +26,7 @@ abstract class Datamodel implements \JsonSerializable {
 
 		$this->_internalData = collect($this->transform($data));
 
-        $this->getUniqueModel();
+        $this->setUniqueModel();
 
         return $this;
 	}
@@ -42,7 +44,7 @@ abstract class Datamodel implements \JsonSerializable {
 
 	public function persist()
 	{
-		if($this->model !== false) {
+		if($this->isPersisted()) {
 			return $this->model;
 		}
 
@@ -72,16 +74,16 @@ abstract class Datamodel implements \JsonSerializable {
 		return $this->model !== false;
 	}
 
-	protected function getUniqueModel()
+	protected function setUniqueModel()
 	{
-        if($this->model !== false) {
-            return $this;
+        if($this->isPersisted()) {
+            return false;
         }
 
 		$model = (new $this->modelClass)->where($this->uniqueKey, $this->id)->first();
 		$this->model = is_null($model) ? false : $model;
 
-		return $this;
+		return $this->model;
 	}
 
 	public function __get($prop)

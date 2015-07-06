@@ -2,8 +2,9 @@
 
 namespace Spectator\Repositories;
 
-use Spectator\Game;
 use Illuminate\Support\Collection;
+use Spectator\Game;
+use Spectator\Services\App\Package;
 
 class YoutubeRepository {
 
@@ -12,23 +13,19 @@ class YoutubeRepository {
 	    //
 	}
 
-	public function saveAll(array $data, Game $assocGame)
+	public function saveAll(Collection $data, Game $assocGame)
 	{
-		$seriesModels = collect([]);
-
-		if(isset($data['series'])) {
-			$this->saveSeries($data['series'], $assocGame);
-			$seriesModels = $data['series'];
+		if($data->has('playlist')) {
+			$this->saveSeries($data->get('playlist'), $assocGame);
 		}
 
-		$this->saveVideos($data['videos'], $assocGame, $seriesModels);
-		$this->saveCreators($data['creators'], $data['videos']);
+		$this->saveVideos($data->get('video'), $assocGame, $data->get('playlist'));
+		$this->saveCreators($data->get('channel'), $data->get('video'));
 	}
 
 	public function saveSeries(Collection $data, Game $game)
 	{
 		$data->each(function($item, $key) use ($game) {
-
 			$item->persist();
 			$item->relatesToGame($game);
 		});

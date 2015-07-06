@@ -2,11 +2,8 @@
 
 namespace Spectator\Repositories;
 
-use Spectator\Video;
-use Spectator\Series;
-use Spectator\Creator;
 use Spectator\Interfaces\RepositoryInterface;
-use Carbon\Carbon;
+use Spectator\Video;
 
 class VideoRepository implements RepositoryInterface {
 

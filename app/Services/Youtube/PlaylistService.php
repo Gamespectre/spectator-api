@@ -3,13 +3,13 @@
 namespace Spectator\Services\Youtube;
 
 use Cache;
+use Illuminate\Support\Collection;
 use Spectator\Datamodels\Playlist;
-use Spectator\Events\Api\Youtube\Playlists\PlaylistsRetrieved;
+use Spectator\Events\Youtube\PlaylistsRetrieved;
 use Spectator\Interfaces\PackageHandler;
-use Spectator\Traits\PackagesData;
 use Spectator\Services\ApiService;
 use Spectator\Sources\YoutubeSource;
-use Illuminate\Support\Collection;
+use Spectator\Traits\PackagesData;
 
 set_time_limit(0);
 

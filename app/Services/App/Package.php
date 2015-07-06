@@ -5,6 +5,7 @@ namespace Spectator\Services\App;
 use Illuminate\Support\Collection;
 use Spectator\Exceptions\PackageRequiredParamException;
 use Spectator\Exceptions\ServiceUnboundException;
+use Spectator\Exceptions\UnresolvablePackageException;
 
 abstract class Package implements \JsonSerializable {
 
@@ -17,6 +18,12 @@ abstract class Package implements \JsonSerializable {
         {
             $this->setData($data);
         }
+    }
+
+    public static function create(array $data)
+    {
+        $package = new static($data);
+        return $package;
     }
 
     public function addService($name, array $props)
@@ -41,8 +48,37 @@ abstract class Package implements \JsonSerializable {
             $this->services->get($serviceName)->pack($this);
         }
         else throw new ServiceUnboundException(
-            "Service '" . $name . "'' is not found in this package!"
+            "Service '" . $serviceName . "'' is not found in this package!"
         );
+    }
+
+    public function packNext()
+    {
+        $this->getNext()->pack($this);
+    }
+
+    public function getNext()
+    {
+        $nextService = $this->services->filter(function($service) {
+
+            $unmetDeps = $service->args->reject(function($arg) {
+                if($this->_params->has($arg)) return true;
+                if($this->services->has($arg)) {
+                    return $this->services->get($arg)->getData() !== false;
+                }
+                else return false;
+            });
+
+            return $service->getData() === false && $unmetDeps->isEmpty();
+        });
+
+        if($nextService->isEmpty()) {
+            throw new UnresolvablePackageException(
+                "Check services for the package. They cannot be resolved."
+            );
+        }
+
+        return $nextService->first();
     }
 
     public function getArgs(Collection $args)
@@ -59,15 +95,55 @@ abstract class Package implements \JsonSerializable {
 
     public function checkDone()
     {
-        return $this->services->filter(function($item) {
+        return $this->services->reject(function($item) {
             return $item->getData() !== false;
-        })->count() === $this->services->count();
+        })->isEmpty();
     }
 
-    public static function create(array $data)
+    public function getServices()
     {
-        $package = new static($data);
-        return $package;
+        return $this->services;
+    }
+
+    public function getData($serviceName = false)
+    {
+        if($serviceName !== false && $this->services->has($serviceName))
+        {
+            return $this->services->get($serviceName)->getData();
+        }
+        else if($serviceName === false) {
+            return $this->services;
+        }
+
+        return false;
+    }
+
+    private function checkRequiredParams($args)
+    {
+        if(isset($this->requiredParams)) {
+            collect($this->requiredParams)->each(function($item, $key) use ($args) {
+                if(!$args->has($item)) {
+                    throw new PackageRequiredParamException(
+                        "The package requires the '" . $item . "' parameter!"
+                    );
+                }
+            });
+        }
+    }
+
+    private function getDependency($name)
+    {
+        if($this->services->has($name)) {
+            return $this->services->get($name)->getData();
+        }
+    }
+
+    protected function setData(array $data)
+    {
+        $this->_params = collect($data);
+        $this->services = collect([]);
+
+        $this->checkRequiredParams($this->_params);
     }
 
     public function serialize()
@@ -92,29 +168,5 @@ abstract class Package implements \JsonSerializable {
         return $this->serialize();
     }
 
-    private function checkRequiredParams($args)
-    {
-        collect($this->requiredParams)->each(function($item, $key) use ($args) {
-            if(!$args->has($item)) {
-                throw new PackageRequiredParamException(
-                    "The package requires the '" . $item . "' parameter!"
-                );
-            }
-        });
-    }
-
-    private function getDependency($name)
-    {
-        if($this->services->has($name)) {
-            return $this->services->get($name)->getData();
-        }
-    }
-
-    protected function setData(array $data)
-    {
-        $this->_params = collect($data);
-        $this->services = collect([]);
-
-        $this->checkRequiredParams($this->_params);
-    }
+    abstract public function saveAll();
 }

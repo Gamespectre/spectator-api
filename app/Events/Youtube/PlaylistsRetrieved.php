@@ -1,11 +1,12 @@
 <?php
 
-namespace Spectator\Events\Api\Youtube;
+namespace Spectator\Events\Youtube;
 
-use Spectator\Events\Event;
 use Illuminate\Queue\SerializesModels;
+use Spectator\Events\Event;
+use Spectator\Services\App\Package;
 
-class Search extends Event
+class PlaylistsRetrieved extends Event
 {
     use SerializesModels;
 
@@ -14,9 +15,9 @@ class Search extends Event
     /**
      * Create a new event instance.
      *
-     * @param Collection $data
+     * @param mixed $data
      */
-    public function __construct($data)
+    public function __construct(Package $data)
     {
         $this->data = $data;
     }
