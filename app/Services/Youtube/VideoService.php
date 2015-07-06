@@ -103,8 +103,9 @@ class VideoService extends ApiService implements PackageHandler {
 	{
 		$pager = new YoutubeApiPager(50, 50, false);
 		$results = collect([]);
+        $order = 0;
 
-		$pager->page(function($pager) use (&$results, $playlistId, $force) {
+		$pager->page(function($pager) use (&$results, $playlistId, &$order, $force) {
 
 			$params = [
 				'maxResults' => $pager->getChunk(),
@@ -131,8 +132,9 @@ class VideoService extends ApiService implements PackageHandler {
 				})->unique();
 
 			$results = $this->getVideosBatch($videoIds, $batchCacheKey)
-				->each(function($item, $key) use ($playlistId) {
+				->each(function($item, $key) use ($playlistId, &$order) {
 					$item->playlist = $playlistId;
+                    $item->order = $order++;
 				})->merge($results->all());
 
 			return $playlistItemResults;

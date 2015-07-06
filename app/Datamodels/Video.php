@@ -26,6 +26,7 @@ class Video extends Datamodel {
 			'channel' => [$raw->snippet->channelId, false],
 			'title' => [$raw->snippet->title],
 			'description' => [$raw->snippet->description],
+			'order' => [$raw->order],
 			'publishedAt' => [Carbon::parse($raw->snippet->publishedAt), 'published_at'],
 			'imageUrl' => [$raw->snippet->thumbnails->high->url, 'image_url'],
 		];

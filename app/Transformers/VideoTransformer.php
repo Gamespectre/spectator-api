@@ -7,7 +7,7 @@ use Spectator\Video;
 
 class VideoTransformer extends TransformerAbstract {
 
-	protected $availableIncludes = [
+	protected $defaultIncludes = [
 		'creator', 'series', 'game'
 	];
 
@@ -17,6 +17,7 @@ class VideoTransformer extends TransformerAbstract {
 			'title' => $video->title,
 			'description' => $video->description,
 			'youtube_id' => $video->video_id,
+			'order' => $video->order,
 			'id' => $video->id
 		];
 	}

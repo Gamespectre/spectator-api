@@ -5,4 +5,4 @@ Route::get('/', function() {
 });
 
 Route::controller('test', 'TestController');
-Route::controller('videos', 'VideoController');
+Route::controller('video', 'VideoController');

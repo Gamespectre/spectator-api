@@ -23,6 +23,10 @@ class VideoController extends ApiController {
         $this->fractal = $fractal;
         $this->request = $request;
         $this->transformer = $transformer;
+
+        if($this->request->has('include')) {
+            $this->fractal->parseIncludes($this->request->include);
+        }
     }
 
     public function getGameVideos($gameid)

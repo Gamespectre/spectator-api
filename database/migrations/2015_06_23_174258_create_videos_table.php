@@ -17,6 +17,7 @@ class CreateVideosTable extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('image_url');
+            $table->integer('order');
             $table->string('video_id')->unique();
             $table->integer('creator_id');
             $table->integer('game_id');
