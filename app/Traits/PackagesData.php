@@ -49,11 +49,11 @@ trait PackagesData
         }
     }
 
-    public function setPackageData($name, $method, Collection $args)
+    public function setPackageData($name, $method, array $args)
     {
         $this->name = $name;
         $this->method = $method;
-        $this->args = $args;
+        $this->args = collect($args);
     }
 
     public function getData()

@@ -32,7 +32,6 @@ class PlaylistService extends ApiService implements PackageHandler {
 	public function getPlaylists(Collection $playlistIds, $force = false)
 	{
 		$playlists = $this->getFromIds($playlistIds, 'getPlaylist', $force);
-
         return $playlists;
     }
 

@@ -30,7 +30,7 @@ abstract class Package implements \JsonSerializable {
     {
         if(\App::bound($name)) {
             $service = \App::make($name);
-            $args = collect($props['args']);
+            $args = $props['args'];
             $method = $service->actions[$props['action']];
 
             $service->setPackageData($name, $method, $args);
@@ -73,6 +73,7 @@ abstract class Package implements \JsonSerializable {
         });
 
         if($nextService->isEmpty()) {
+            // TODO: add PackageDone event as fallback if services have data.
             throw new UnresolvablePackageException(
                 "Check services for the package. They cannot be resolved."
             );
@@ -136,6 +137,8 @@ abstract class Package implements \JsonSerializable {
         if($this->services->has($name)) {
             return $this->services->get($name)->getData();
         }
+
+        return false;
     }
 
     protected function setData(array $data)
@@ -144,6 +147,11 @@ abstract class Package implements \JsonSerializable {
         $this->services = collect([]);
 
         $this->checkRequiredParams($this->_params);
+    }
+
+    public function getParams()
+    {
+        return $this->_params;
     }
 
     public function serialize()
