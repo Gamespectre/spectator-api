@@ -12,4 +12,14 @@ class Creator extends Model {
 	{
 		return $this->hasMany('Spectator\Video');
 	}
+
+	public function series()
+	{
+		return $this->hasMany('Spectator\Series');
+	}
+
+	public function games()
+	{
+		return $this->belongsToMany('Spectator\Game');
+	}
 }

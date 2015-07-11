@@ -18,4 +18,9 @@ class Series extends Model {
 		return $this->belongsToMany('Spectator\Video');
 	}
 
+	public function creator()
+	{
+		return $this->belongsTo('Spectator\Creator');
+	}
+
 }

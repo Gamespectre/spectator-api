@@ -3,12 +3,13 @@
 namespace Spectator\Transformers;
 
 use League\Fractal\TransformerAbstract;
+use Spectator\Creator;
 use Spectator\Game;
 
 class GameTransformer extends TransformerAbstract {
 
 	protected $availableIncludes = [
-		'series', 'videos'
+		'series', 'videos', 'creators'
 	];
 
 	public function transform(Game $game) {
@@ -34,5 +35,12 @@ class GameTransformer extends TransformerAbstract {
 	{
 		$series = $game->series;
 		return $this->collection($series, new SeriesTransformer);
+	}
+
+	public function includeCreators(Game $game)
+	{
+        $creator = \App::make('Spectator\Repositories\CreatorRepository');
+        $creators = $creator->getByGame($game->id);
+		return $this->collection($creators, new CreatorTransformer);
 	}
 }

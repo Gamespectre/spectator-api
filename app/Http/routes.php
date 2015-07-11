@@ -6,3 +6,7 @@ Route::get('/', function() {
 
 Route::controller('test', 'TestController');
 Route::controller('video', 'VideoController');
+Route::controller('game', 'GameController');
+Route::controller('series', 'SeriesController');
+Route::controller('creator', 'CreatorController');
+Route::controller('search', 'SearchController');

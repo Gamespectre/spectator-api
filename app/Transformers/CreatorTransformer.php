@@ -8,7 +8,7 @@ use Spectator\Creator;
 class CreatorTransformer extends TransformerAbstract {
 
 	protected $availableIncludes = [
-		'videos'
+		'videos', 'games', 'series'
 	];
 
 	public function transform(Creator $creator) {
@@ -25,5 +25,17 @@ class CreatorTransformer extends TransformerAbstract {
 	{
 		$videos = $creator->videos;
 		return $this->collection($videos, new VideoTransformer);
+	}
+
+    public function includeSeries(Creator $creator)
+    {
+        $series = $creator->series;
+        return $this->collection($series, new SeriesTransformer);
+    }
+
+	public function includeGames(Creator $creator)
+	{
+		$games = $creator->games;
+		return $this->collection($games, new GameTransformer);
 	}
 }

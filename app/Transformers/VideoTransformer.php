@@ -8,7 +8,11 @@ use Spectator\Video;
 class VideoTransformer extends TransformerAbstract {
 
 	protected $defaultIncludes = [
-		'creator', 'series', 'game'
+		'creator', 'series'
+	];
+
+	protected $availableIncludes = [
+		'game'
 	];
 
 	public function transform(Video $video) {

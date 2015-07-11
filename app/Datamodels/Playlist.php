@@ -3,6 +3,7 @@
 namespace Spectator\Datamodels;
 
 use Carbon\Carbon;
+use Spectator\Creator;
 use Spectator\Game;
 use Spectator\Series;
 
@@ -19,6 +20,13 @@ class Playlist extends Datamodel {
 	public function relatesToGame(Game $model)
 	{
 		$this->model->game()->associate($model);
+		$this->model->save();
+		return $this->model;
+	}
+
+	public function relatesToCreator(Creator $model)
+	{
+		$this->model->creator()->associate($model);
 		$this->model->save();
 		return $this->model;
 	}

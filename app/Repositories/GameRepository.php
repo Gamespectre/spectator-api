@@ -12,36 +12,72 @@ class GameRepository implements RepositoryInterface {
 
 	public function __construct() {}
 
-	public function getAll() {
-		return Game::all();
+	public function getAll($perPage = 20) {
+
+		if($perPage !== false) {
+            return Game::paginate($perPage);
+        }
+
+        return Game::all();
 	}
 
-	public function get($id, $loadRelated = true) {
-		$game = Game::find((int) $id);
+	public function get($identifier) {
+		$game = null;
 
-		if($loadRelated && $game !== null) {
-			$game->load('videos.creator', 'series');
-		}
+        if(is_numeric($identifier)) {
+            $game = Game::where('id', $identifier)
+                    ->with('videos', 'creators', 'series')->first();
+        }
+        else {
+            $game = $this->getByName($identifier);
+        }
 
 		return $game;
 	}
 
-	public function getByName($name, $loadRelated = true) {
-		$game = Game::where('title', 'like', $name . '%')->first();
+	public function getVideosByGame($id, $perPage = 10)
+	{
+		$game = $this->get($id);
 
-		if($loadRelated && $game !== null) {
-			$game->load('videos.creator', 'series');
-		}
+        if($perPage !== false) {
+            return $game->videos()->paginate($perPage);
+        }
+
+        return $game->videos;
+	}
+
+    public function getSeriesByGame($id, $perPage = 10)
+    {
+        $game = $this->get($id);
+
+        if($perPage !== false) {
+            return $game->series()->with('videos', 'creator')->paginate($perPage);
+        }
+
+        return $game->series;
+    }
+
+    public function getCreatorsByGame($id, $perPage = 10)
+    {
+        $game = $this->get($id);
+
+        if($perPage !== false) {
+            return $game->creators()->with('videos', 'series')->paginate($perPage);
+        }
+
+        return $game->series;
+    }
+
+	public function getByName($name) {
+		$game = Game::where('title', 'like', '%' . $name . '%')
+                ->with('videos', 'creators', 'series')->first();
 
 		return $game;
 	}
 
-	public function getByApiId($id, $loadRelated = true) {
-		$game = Game::where('api_id', $id)->first();
-
-		if($loadRelated && $game !== null) {
-			$game->load('videos.creator', 'series');
-		}
+	public function getByApiId($id) {
+		$game = Game::where('api_id', $id)
+                ->with('videos', 'creators', 'series')->first();
 
 		return $game;
 	}

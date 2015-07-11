@@ -3,6 +3,7 @@
 namespace Spectator\Console\Commands;
 
 use Illuminate\Console\Command;
+use Spectator\Events\Game\Search;
 use Spectator\Repositories\GameRepository;
 use Spectator\Sources\GiantBombSource;
 
@@ -39,8 +40,10 @@ class GetGame extends Command
     public function handle()
     {
         $query = $this->argument('query');
-        $data = $this->source->get('3030-' . $query);
-        $model = $this->repo->createModel($data);
+
+        \Event::fire(new Search([
+            'gameApiId' => $query
+        ]));
 
         $this->info('Game ' . $model->title . ' saved to the database!');
     }

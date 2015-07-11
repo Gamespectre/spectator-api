@@ -17,4 +17,9 @@ class Game extends Model {
 	{
 		return $this->hasMany('Spectator\Series');
 	}
+
+	public function creators()
+	{
+		return $this->belongsToMany('Spectator\Creator');
+	}
 }

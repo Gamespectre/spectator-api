@@ -20,7 +20,7 @@ class YoutubeRepository {
 		}
 
 		$this->saveVideos($data->get('video'), $assocGame, $data->get('playlist'));
-		$this->saveCreators($data->get('channel'), $data->get('video'));
+		$this->saveCreators($data->get('channel'), $data->get('video'), $assocGame, $data->get('playlist'));
 	}
 
 	public function saveSeries(Collection $data, Game $game)
@@ -50,10 +50,11 @@ class YoutubeRepository {
 		});
 	}
 
-	public function saveCreators(Collection $data, Collection $videos)
+	public function saveCreators(Collection $data, Collection $videos, Game $assocGame, Collection $series = null)
 	{
-		$data->each(function($item, $key) use ($videos) {
+		$data->each(function($item, $key) use ($videos, $series, $assocGame) {
 			$item->persist();
+            $item->relatesToGame($assocGame);
 
 			$videos->filter(function($video) use ($item) {
 				return $item->id === $video->channel;
@@ -61,6 +62,15 @@ class YoutubeRepository {
             ->each(function($video) use ($item) {
                 $video->relatesToCreator($item->model);
             });
+
+            if(!is_null($series)) {
+                $series->filter(function($serie) use ($item) {
+                    return $item->id === $serie->channel;
+                })
+                ->each(function($serie) use ($item) {
+                    $serie->relatesToCreator($item->model);
+                });
+            }
 		});
 	}
 }
