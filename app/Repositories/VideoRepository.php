@@ -18,11 +18,23 @@ class VideoRepository implements RepositoryInterface {
 		return Video::with('series', 'creator', 'game')->get();
 	}
 
-	public function getVideosByGame($gameid)
+	public function getSeriesByVideo($videoId)
 	{
-		$game = $this->game->get($gameid);
-		return $game->videos()->with('series', 'creator')->get();
+		$series = Video::where('id', $videoId)->with('creator', 'series')->first();
+        return $series->series()->with('creator', 'game')->get();
 	}
+
+    public function getGameByVideo($videoId)
+    {
+        $game = Video::where('id', $videoId)->with('game')->first();
+        return $game->game()->with('creators', 'series')->first();
+    }
+
+    public function getCreatorByVideo($videoId)
+    {
+        $creator = Video::where('id', $videoId)->with('creator')->first();
+        return $creator->creator()->with('games', 'series')->first();
+    }
 
 	public function get($id)
 	{

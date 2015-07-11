@@ -14,6 +14,16 @@ class ApiController extends Controller
 
     }
 
+    protected function setIncludes($includes)
+    {
+        if($this->includesSet)
+        {
+            return false;
+        }
+
+        $this->fractal->parseIncludes($includes);
+    }
+
     public function getStatusCode()
     {
         return $this->statusCode;

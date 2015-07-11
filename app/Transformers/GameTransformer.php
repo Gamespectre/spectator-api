@@ -39,8 +39,7 @@ class GameTransformer extends TransformerAbstract {
 
 	public function includeCreators(Game $game)
 	{
-        $creator = \App::make('Spectator\Repositories\CreatorRepository');
-        $creators = $creator->getByGame($game->id);
+        $creators = $game->creators;
 		return $this->collection($creators, new CreatorTransformer);
 	}
 }

@@ -16,10 +16,11 @@ class GameController extends ApiController {
 
     use FractalDataTrait;
 
+    protected $includesSet = false;
     private $perPage;
     private $repo;
-    private $fractal;
-    private $request;
+    protected $fractal;
+    protected $request;
     private $transformer;
 
     public function __construct(GameRepository $repo, Manager $fractal, GameTransformer $transformer, Request $request)
@@ -28,10 +29,11 @@ class GameController extends ApiController {
         $this->fractal = $fractal;
         $this->request = $request;
         $this->transformer = $transformer;
-        $this->perPage = 5;
+        $this->perPage = 10;
 
         if($this->request->has('include')) {
-            $this->fractal->parseIncludes($this->request->include);
+            $this->setIncludes($this->request->include);
+            $this->includesSet = true;
         }
 
         if($this->request->has('perPage')) {
@@ -41,6 +43,8 @@ class GameController extends ApiController {
 
     public function getIndex()
     {
+        $this->setIncludes('creators,series');
+
         $models = $this->repo->getAll($this->perPage);
         $data = $this->createPagedCollection($models, $this->transformer);
         return $this->respond($data);
@@ -48,6 +52,8 @@ class GameController extends ApiController {
 
     public function getVideos(VideoTransformer $transformer, $gameId)
     {
+        $this->setIncludes('creators,series');
+
         $models = $this->repo->getVideosByGame($gameId, $this->perPage);
         $data = $this->createPagedCollection($models, $transformer);
         return $this->respond($data);
@@ -55,7 +61,7 @@ class GameController extends ApiController {
 
     public function getSeries(SeriesTransformer $transformer, $gameId)
     {
-        $this->fractal->parseIncludes('videos.creator');
+        $this->setIncludes('creators');
 
         $model = $this->repo->getSeriesByGame($gameId, $this->perPage);
         $data = $this->createPagedCollection($model, $transformer);
@@ -64,6 +70,8 @@ class GameController extends ApiController {
 
     public function getCreators(CreatorTransformer $transformer, $gameId)
     {
+        $this->setIncludes('series, games');
+
         $model = $this->repo->getCreatorsByGame($gameId, $this->perPage);
         $data = $this->createPagedCollection($model, $transformer);
         return $this->respond($data);
