@@ -9,6 +9,8 @@ use Spectator\Services\ApiService;
 use Spectator\Sources\GiantBombSource;
 use Spectator\Traits\PackagesData;
 
+set_time_limit(0);
+
 class GameService extends ApiService
 {
     use PackagesData;
@@ -17,7 +19,8 @@ class GameService extends ApiService
     protected $event = GameRetrieved::class;
 
     public $actions = [
-        'get' => 'getGameByID'
+        'get' => 'getGameByID',
+        'search' => 'searchGame'
     ];
 
     public function __construct(GiantBombSource $source)
@@ -35,6 +38,19 @@ class GameService extends ApiService
             return $this->source->get($id);
         });
 
-        return Game::createFromItem($gameData);
+        return Game::createData(collect([$gameData]));
+    }
+
+    public function searchGame($query, $force = true)
+    {
+        if($force === true) {
+            Cache::forget($query);
+        }
+
+        $gameData = Cache::rememberForever($query, function() use ($query) {
+            return $this->source->search($query);
+        });
+
+        return Game::createData(collect($gameData));
     }
 }

@@ -20,10 +20,6 @@ trait PackagesData
         $args = $package->getArgs($this->args);
         $data = call_user_func_array([$this, $this->method], $args->all());
 
-        if(!$data instanceof Collection) {
-            $data = collect([$data]);
-        }
-
         $this->data = $data;
 
         $this->done();

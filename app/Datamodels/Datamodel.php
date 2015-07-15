@@ -18,12 +18,8 @@ abstract class Datamodel implements \JsonSerializable {
 		}
 	}
 
-	public function create($data)
+	public function create(array $data)
 	{
-		if(is_array($data)) {
-            $data = $data[0];
-        }
-
 		$this->_internalData = collect($this->transform($data));
 
         $this->setUniqueModel();
@@ -31,11 +27,7 @@ abstract class Datamodel implements \JsonSerializable {
         return $this;
 	}
 
-	public static function createFromItem($data) {
-		return new static($data);
-	}
-
-	public static function createFromCollection(Collection $rawCollection)
+	public static function createData(Collection $rawCollection)
 	{
 		return $rawCollection->map(function($item, $key) {
             return new static($item);
@@ -44,9 +36,9 @@ abstract class Datamodel implements \JsonSerializable {
 
 	public function persist()
 	{
-		if($this->isPersisted()) {
-			return $this->model;
-		}
+        if($this->isPersisted() || !$this->usesDb()) {
+            return false;
+        }
 
 		$props = [];
 
@@ -65,7 +57,7 @@ abstract class Datamodel implements \JsonSerializable {
 			}
 		});
 
-		$this->model = (new $this->modelClass)->create($props);
+		$this->model = \App::make($this->modelClass)->create($props);
 		return $this->model;
 	}
 
@@ -74,13 +66,27 @@ abstract class Datamodel implements \JsonSerializable {
 		return $this->model !== false;
 	}
 
+    public function usesDb()
+    {
+        return isset($this->useDb) ? $this->useDb : true;
+    }
+
+    public function setDb($id, $model, $enableDb = true)
+    {
+        $this->uniqueKey = $id;
+        $this->modelClass = $model;
+        $this->useDb = $enableDb;
+
+        $this->setUniqueModel();
+    }
+
 	protected function setUniqueModel()
 	{
-        if($this->isPersisted()) {
+        if($this->isPersisted() || !$this->usesDb()) {
             return false;
         }
 
-		$model = (new $this->modelClass)->where($this->uniqueKey, $this->id)->first();
+		$model = \App::make($this->modelClass)->where($this->uniqueKey, $this->id)->first();
 		$this->model = is_null($model) ? false : $model;
 
 		return $this->model;
@@ -111,7 +117,7 @@ abstract class Datamodel implements \JsonSerializable {
 
     public function serialize()
     {
-        return $this->_internalData->put("model", $this->model);
+        return $this->_internalData->put("model", $this->model)->toArray();
 	}
 
 	public function jsonSerialize()

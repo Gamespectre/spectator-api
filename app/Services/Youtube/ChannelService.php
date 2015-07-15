@@ -70,7 +70,7 @@ class ChannelService extends ApiService implements PackageHandler {
 			return $this->source->getCreator($params);
 		});
 
-		return Channel::createFromItem($result['items']);
+		return Channel::createData(collect($result['items']));
 	}
 
 }

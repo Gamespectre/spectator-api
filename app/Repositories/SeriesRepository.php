@@ -13,26 +13,38 @@ class SeriesRepository implements RepositoryInterface {
 		$this->game = $gameRepo;
 	}
 
-	public function getAll()
+	public function getAll($perPage = 20)
 	{
-		return Series::with('videos', 'game')->get();
+		return Series::with('videos', 'game')->paginate($perPage);
 	}
 
-	public function getSeriesByGame($gameid)
+	public function getVideosInSeries($id, $perPage)
 	{
-		$game = $this->game->get($gameid);
-		return $game->series()->with('videos.creator')->get();
+        $series = Series::where('id', $id)->with('game', 'creator', 'videos')->first();
+        return $series->videos()->with('creator', 'game')->paginate($perPage);
 	}
+
+	public function getGameOfSeries($seriesId)
+	{
+		$series = Series::where('id', $seriesId)->with('game', 'creator')->first();
+		return $series->game()->with('series', 'creators', 'videos')->first();
+	}
+
+    public function getCreatorOfSeries($seriesId)
+    {
+        $series = Series::where('id', $seriesId)->with('creator.series', 'creator.games', 'creator.videos')->first();
+        return $series->creator()->with('series', 'games', 'videos')->first();
+    }
 
 	public function getSeriesByPlaylistId($playlistid)
 	{
 		$series = $this->series->where('playlist_id', $playlistid);
-		return $series->with('videos.creator')->first();
+		return $series->with('videos', 'creator')->first();
 	}
 
 	public function get($id)
 	{
-		$series = Series::findOrFail($id)->load('videos.creator')->get();
+		$series = Series::findOrFail($id)->load('videos', 'creator')->get();
 		return $series->first();
 	}
 

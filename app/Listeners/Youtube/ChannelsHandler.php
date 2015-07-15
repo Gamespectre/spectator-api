@@ -6,7 +6,7 @@ use Spectator\Events\Youtube\ChannelsRetrieved;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class ChannelsHandler
+class ChannelsHandler implements ShouldQueue
 {
     /**
      * Create the event listener.

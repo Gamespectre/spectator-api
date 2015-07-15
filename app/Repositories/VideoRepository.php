@@ -18,10 +18,10 @@ class VideoRepository implements RepositoryInterface {
 		return Video::with('series', 'creator', 'game')->get();
 	}
 
-	public function getSeriesByVideo($videoId)
+	public function getSeriesByVideo($videoId, $perPage)
 	{
 		$series = Video::where('id', $videoId)->with('creator', 'series')->first();
-        return $series->series()->with('creator', 'game')->get();
+        return $series->series()->with('creator', 'game')->paginate($perPage);
 	}
 
     public function getGameByVideo($videoId)

@@ -2,13 +2,14 @@
 
 namespace Spectator\Services\App;
 
+use Illuminate\Support\Collection;
 use Spectator\Repositories\YoutubeRepository;
 
 class YoutubePackage extends Package
 {
     protected $requiredParams = ['game'];
 
-    public function saveOnly(Collection $resourceIds)
+    public function saveOnly(Collection $data)
     {
         // TODO: Implement when I have a frontend
     }

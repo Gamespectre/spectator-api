@@ -2,11 +2,12 @@
 
 namespace Spectator\Listeners\Youtube;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Spectator\Events\Youtube\Search;
 use Spectator\Services\App\YoutubePackage;
 use Spectator\Services\Youtube\SearchService;
 
-class SearchHandler
+class SearchHandler implements ShouldQueue
 {
     /**
      * @var SearchService
@@ -36,7 +37,8 @@ class SearchHandler
             'game' => $event->data['game'],
             'query' => $query,
             'results' => $results,
-            'force' => false
+            'force' => false,
+            'event' => $event->data
         ]);
 
         // Add all services you want to pack

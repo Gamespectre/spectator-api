@@ -59,7 +59,7 @@ class PlaylistService extends ApiService implements PackageHandler {
 			return $this->source->getSeries($params);
 		});
 
-		return Playlist::createFromItem($results['items']);
+		return Playlist::createData(collect($results['items']));
 	}
 
 	public function searchPlaylists($query, $playlistsToGet, $force = false)
@@ -92,7 +92,7 @@ class PlaylistService extends ApiService implements PackageHandler {
 			return $apiData;
 		});
 
-		return Playlist::createFromCollection($results);
+		return Playlist::createData($results);
 	}
 
 }

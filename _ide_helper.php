@@ -1,7 +1,7 @@
 <?php
 /**
  * A helper file for Laravel 5, to provide autocomplete information to your IDE
- * Generated for Laravel 5.1.6 (LTS) on 2015-07-06.
+ * Generated for Laravel 5.1.7 (LTS) on 2015-07-15.
  *
  * @author Barry vd. Heuvel <barryvdh@gmail.com>
  * @see https://github.com/barryvdh/laravel-ide-helper
@@ -11556,7 +11556,7 @@ namespace {
          * @param string $view
          * @param array $data
          * @param array $mergeData
-         * @return \Illuminate\View\View 
+         * @return \Illuminate\Contracts\View\View 
          * @static 
          */
         public static function make($view, $data = array(), $mergeData = array()){

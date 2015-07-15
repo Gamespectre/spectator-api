@@ -71,7 +71,7 @@ class VideoService extends ApiService implements PackageHandler {
 			return $this->source->getVideo($params);
 		});
 
-		return Video::createFromCollection(collect($results['items']));
+		return Video::createData(collect($results['items']));
 	}
 
 	public function updateVideo($videoId)
@@ -96,7 +96,7 @@ class VideoService extends ApiService implements PackageHandler {
 			return $this->source->getVideo($params);
 		});
 
-		return Video::createFromItem($results['items']);
+		return Video::createData($results['items']);
 	}
 
 	public function getVideosInPlaylist($playlistId, $force = false)

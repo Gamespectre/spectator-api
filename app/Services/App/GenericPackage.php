@@ -2,6 +2,8 @@
 
 namespace Spectator\Services\App;
 
+use Illuminate\Support\Collection;
+
 class GenericPackage extends Package
 {
     /**
@@ -11,5 +13,10 @@ class GenericPackage extends Package
     public function saveAll()
     {
         // Not impolemented for generic package.
+    }
+
+    public function saveOnly(Collection $data)
+    {
+        // Not implemented
     }
 }

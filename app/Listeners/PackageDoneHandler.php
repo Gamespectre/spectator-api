@@ -3,6 +3,7 @@
 namespace Spectator\Listeners;
 
 use Spectator\Events\PackageDone;
+use Spectator\Events\PackageSaved;
 
 class PackageDoneHandler
 {
@@ -22,7 +23,9 @@ class PackageDoneHandler
      */
     public function handle(PackageDone $event)
     {
-        $event->data->saveAll();
-        dd("Package saved");
+        $packageId = $event->data->packageId;
+        \Cache::put($packageId, 15, serialize($event->data));
+
+        //event(new PackageSaved($event->data));
     }
 }

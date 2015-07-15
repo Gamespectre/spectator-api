@@ -15,6 +15,7 @@ class Kernel extends ConsoleKernel
     protected $commands = [
         \Spectator\Console\Commands\GetGame::class,
         \Spectator\Console\Commands\GetVideos::class,
+        \Spectator\Console\Commands\CreateBaseUser::class,
     ];
 
     /**

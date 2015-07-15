@@ -9,6 +9,7 @@ use Spectator\Exceptions\UnresolvablePackageException;
 
 abstract class Package implements \JsonSerializable {
 
+    public $packageId;
     protected $_params;
     protected $services;
 
@@ -18,6 +19,8 @@ abstract class Package implements \JsonSerializable {
         {
             $this->setData($data);
         }
+
+        $this->packageId = uniqid('package-');
     }
 
     public static function create(array $data)
@@ -158,7 +161,7 @@ abstract class Package implements \JsonSerializable {
     {
         return $this->services->map(function($item, $key) {
             return $item->getData();
-        })->merge($this->_params->all());
+        })->merge($this->_params->all())->put('id', $this->packageId)->toArray();
     }
 
     public function __toString()
@@ -168,7 +171,7 @@ abstract class Package implements \JsonSerializable {
 
     public function __sleep()
     {
-        return ["_params", "services"];
+        return ["_params", "services", "packageId"];
     }
 
     public function jsonSerialize()
@@ -177,4 +180,5 @@ abstract class Package implements \JsonSerializable {
     }
 
     abstract public function saveAll();
+    abstract public function saveOnly(Collection $data);
 }

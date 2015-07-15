@@ -42,7 +42,7 @@ class VideoController extends ApiController {
 
     public function getSeries(SeriesTransformer $transformer, $videoId)
     {
-        $this->setIncludes('creator,game,videos');
+        $this->setIncludes('creator,game');
 
         $model = $this->repo->getSeriesByVideo($videoId, $this->perPage);
         $data = $this->createPagedCollection($model, $transformer);

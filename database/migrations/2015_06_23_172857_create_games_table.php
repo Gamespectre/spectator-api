@@ -16,11 +16,11 @@ class CreateGamesTable extends Migration
             $table->increments('id');
             $table->integer('api_id')->unique();
             $table->string('title');
-            $table->text('description');
-            $table->string('franchise');
+            $table->text('description')->nullable();
+            $table->string('franchise')->nullable();
             $table->string('year');
-            $table->string('rating');
-            $table->string('image_url');
+            $table->string('rating')->nullable();
+            $table->string('image_url')->nullable();
             $table->timestamps();
         });
     }

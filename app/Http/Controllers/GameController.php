@@ -17,7 +17,7 @@ class GameController extends ApiController {
     use FractalDataTrait;
 
     protected $includesSet = false;
-    private $perPage;
+    private $perPage = 10;
     private $repo;
     protected $fractal;
     protected $request;
@@ -29,7 +29,6 @@ class GameController extends ApiController {
         $this->fractal = $fractal;
         $this->request = $request;
         $this->transformer = $transformer;
-        $this->perPage = 10;
 
         if($this->request->has('include')) {
             $this->setIncludes($this->request->include);

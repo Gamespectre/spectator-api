@@ -6,7 +6,7 @@ use Spectator\Events\Youtube\PlaylistsRetrieved;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class PlaylistsHandler
+class PlaylistsHandler implements ShouldQueue
 {
     /**
      * Create the event listener.

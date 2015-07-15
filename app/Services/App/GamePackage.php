@@ -2,6 +2,7 @@
 
 namespace Spectator\Services\App;
 
+use Illuminate\Support\Collection;
 use Spectator\Repositories\GameRepository;
 
 class GamePackage extends Package
@@ -11,5 +12,11 @@ class GamePackage extends Package
     {
         $data = $this->getData('game');
         \App::make(GameRepository::class)->saveGames($data);
+    }
+
+    public function saveOnly(Collection $data)
+    {
+        $games = $this->getData('game');
+        dd($games);
     }
 }

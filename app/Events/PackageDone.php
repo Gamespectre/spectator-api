@@ -2,11 +2,12 @@
 
 namespace Spectator\Events;
 
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
 use Spectator\Events\Event;
 use Spectator\Services\App\Package;
 
-class PackageDone extends Event
+class PackageDone extends Event implements ShouldBroadcast
 {
     use SerializesModels;
 
@@ -25,13 +26,13 @@ class PackageDone extends Event
         $this->data = $data;
     }
 
-    /**
-     * Get the channels the event should be broadcast on.
-     *
-     * @return array
-     */
     public function broadcastOn()
     {
-        return [];
+        if($this->data->getParams()->has('event')) {
+            return [$this->data->getParams()->get('event')['channel']];
+        }
+        else {
+            return [];
+        }
     }
 }

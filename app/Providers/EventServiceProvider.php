@@ -28,6 +28,9 @@ class EventServiceProvider extends ServiceProvider
         'Spectator\Events\PackageDone' => [
             'Spectator\Listeners\PackageDoneHandler'
         ],
+        'Spectator\Events\SaveCachedPackage' => [
+            'Spectator\Listeners\PackageCacheSaveHandler'
+        ],
         'Spectator\Events\Youtube\PlaylistsRetrieved' => [
             'Spectator\Listeners\Youtube\PlaylistsHandler'
         ],

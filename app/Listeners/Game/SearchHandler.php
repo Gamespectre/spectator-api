@@ -7,7 +7,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Spectator\Services\App\GamePackage;
 
-class SearchHandler
+class SearchHandler implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -26,14 +26,16 @@ class SearchHandler
      */
     public function handle(Search $event)
     {
-        $query = $event->data['gameApiId'];
+        $query = $event->data['query'];
+        $method = $event->data['method'];
 
         $package = GamePackage::create([
-            'query' => $query
+            'query' => $query,
+            'event' => $event->data
         ]);
 
         $package->addService('game', [
-            'action' => 'get',
+            'action' => $method,
             'args' => ['query']
         ]);
 
