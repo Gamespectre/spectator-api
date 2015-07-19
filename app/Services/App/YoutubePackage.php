@@ -11,7 +11,11 @@ class YoutubePackage extends Package
 
     public function saveOnly(Collection $data)
     {
-        // TODO: Implement when I have a frontend
+        $data = $this->services->map(function($service, $key) {
+            return $service->getData();
+        });
+
+        \App::make(YoutubeRepository::class)->saveAll($data, $this->_params->get('game'));
     }
 
     /**

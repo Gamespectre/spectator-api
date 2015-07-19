@@ -43,11 +43,11 @@ class VideoService extends ApiService implements PackageHandler {
 		$videos = collect([]);
 
 		$playlists
-            ->map(function($item, $key) {
+            ->map(function($item) {
 				return $item->id;
 			})
 			->unique()
-			->each(function($item, $key) use (&$videos, $force) {
+			->each(function($item) use (&$videos, $force) {
 				$videos = $this->getVideosInPlaylist($item, $force)->merge($videos->all());
 			});
 

@@ -6,7 +6,7 @@ use Spectator\Events\Youtube\VideosRetrieved;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class VideosHandler implements ShouldQueue
+class VideosHandler
 {
     /**
      * Create the event listener.

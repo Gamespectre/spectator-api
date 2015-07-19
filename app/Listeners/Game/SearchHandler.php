@@ -28,10 +28,11 @@ class SearchHandler implements ShouldQueue
     {
         $query = $event->data['query'];
         $method = $event->data['method'];
+        $channel = $event->data['channel'];
 
         $package = GamePackage::create([
             'query' => $query,
-            'event' => $event->data
+            'channel' => $channel
         ]);
 
         $package->addService('game', [

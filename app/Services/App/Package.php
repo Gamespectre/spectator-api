@@ -63,7 +63,6 @@ abstract class Package implements \JsonSerializable {
     public function getNext()
     {
         $nextService = $this->services->filter(function($service) {
-
             $unmetDeps = $service->args->reject(function($arg) {
                 if($this->_params->has($arg)) return true;
                 if($this->services->has($arg)) {

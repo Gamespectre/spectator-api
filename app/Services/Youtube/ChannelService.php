@@ -36,16 +36,18 @@ class ChannelService extends ApiService implements PackageHandler {
 
 	public function getCreatorsForVideos(Collection $videos, $force = false)
 	{
-		$creators = $videos
-			->map(function($video) {
-				return $video->channel;
-			})
-			->unique()
-			->map(function($item, $key) use ($force) {
-				return $this->getCreator($item, $force);
-			});
+		$creators = collect([]);
 
-		return $creators;
+		$videos
+            ->map(function($video) {
+                return $video->channel;
+            })
+            ->unique()
+            ->each(function($item) use (&$creators, $force) {
+                $creators = $this->getCreator($item, $force)->merge($creators->all());
+            });
+
+        return $creators;
 	}
 
 	public function updateCreator($channelId)

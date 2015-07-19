@@ -28,11 +28,22 @@ class PackageDone extends Event implements ShouldBroadcast
 
     public function broadcastOn()
     {
-        if($this->data->getParams()->has('event')) {
-            return [$this->data->getParams()->get('event')['channel']];
+        if($this->data->getParams()->has('channel')) {
+            return [$this->data->getParams()->get('channel')];
         }
         else {
             return [];
         }
+    }
+
+    public function broadcastWith()
+    {
+        $response = [
+            "id" => $this->data->packageId,
+            "channel" => $this->data->getParams()->get('channel'),
+            "query" => $this->data->getParams()->get('query')
+        ];
+
+        return $response;
     }
 }

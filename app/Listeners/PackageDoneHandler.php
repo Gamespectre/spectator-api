@@ -2,8 +2,8 @@
 
 namespace Spectator\Listeners;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Spectator\Events\PackageDone;
-use Spectator\Events\PackageSaved;
 
 class PackageDoneHandler
 {
@@ -24,8 +24,6 @@ class PackageDoneHandler
     public function handle(PackageDone $event)
     {
         $packageId = $event->data->packageId;
-        \Cache::put($packageId, 15, serialize($event->data));
-
-        //event(new PackageSaved($event->data));
+        \Cache::put($packageId, serialize($event->data), 15);
     }
 }

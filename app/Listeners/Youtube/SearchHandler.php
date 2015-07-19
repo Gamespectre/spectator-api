@@ -31,6 +31,7 @@ class SearchHandler implements ShouldQueue
     {
         $query = $this->search->getSearchQueryForGame($event->data['game']);
         $results = isset($event->data['results']) ? $event->data['results'] : 10;
+        $channel = $event->data['channel'];
 
         // Create a new package with parameters
         $package = YoutubePackage::create([
@@ -38,7 +39,7 @@ class SearchHandler implements ShouldQueue
             'query' => $query,
             'results' => $results,
             'force' => false,
-            'event' => $event->data
+            'channel' => $channel
         ]);
 
         // Add all services you want to pack
