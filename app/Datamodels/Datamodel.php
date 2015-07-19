@@ -18,7 +18,7 @@ abstract class Datamodel implements \JsonSerializable {
 		}
 	}
 
-	public function create(array $data)
+	public function create($data)
 	{
 		$this->_internalData = collect($this->transform($data));
 
@@ -29,9 +29,11 @@ abstract class Datamodel implements \JsonSerializable {
 
 	public static function createData(Collection $rawCollection)
 	{
-		return $rawCollection->map(function($item, $key) {
+		$datamodels = $rawCollection->map(function($item, $key) {
             return new static($item);
         });
+
+		return $datamodels;
 	}
 
 	public function persist()

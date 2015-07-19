@@ -50,7 +50,7 @@ class AdminController extends Controller
         $channel = 'contentadd';
 
         $game = $request->input('query');
-        $gameModel = $this->game->get($game);
+        $gameModel = $this->game->get((int) $game);
 
         event(new YoutubeSearch([
             'game' => $gameModel,
@@ -64,12 +64,14 @@ class AdminController extends Controller
     {
         $packageId = $request->input('packageId');
         $saveDatamodels = $request->input('saveData');
-        $channel = $request->input('channel');
+        $channel = 'packagesave';
 
         event(new SaveCachedPackage([
             'package' => $packageId,
             'channel' => $channel,
             'data' => $saveDatamodels
         ]));
+
+        return \Response::json(['channel' => $channel]);
     }
 }

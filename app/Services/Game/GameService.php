@@ -41,7 +41,7 @@ class GameService extends ApiService
         return Game::createData(collect([$gameData]));
     }
 
-    public function searchGame($query, $force = true)
+    public function searchGame($query, $force = false)
     {
         if($force === true) {
             Cache::forget($query);

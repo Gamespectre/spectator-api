@@ -17,6 +17,13 @@ class GamePackage extends Package
     public function saveOnly(Collection $data)
     {
         $games = $this->getData('game');
-        dd($games);
+
+        $games->each(function($game) use ($data) {
+            $save = $data->get($game->id);
+
+            if($save) {
+                $game->persist();
+            }
+        });
     }
 }

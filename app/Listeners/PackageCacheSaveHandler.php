@@ -30,7 +30,9 @@ class PackageCacheSaveHandler implements ShouldQueue
         $dataToSave = $event->data['data'];
         $channel = $event->data['channel'];
 
-        if(!\Cache::has($packageId)) {
+        $packageData = \Cache::pull($packageId);
+
+        if(is_null($packageData)) {
             event(new PackageSaveFailed([
                 'channel' => $channel,
                 'message' => 'Package not found in cache. Your session timed out.'
@@ -39,8 +41,7 @@ class PackageCacheSaveHandler implements ShouldQueue
             return false;
         }
 
-        $package = unserialize(\Cache::get($packageId));
-        \Cache::forget($packageId);
+        $package = unserialize($packageData);
 
         if($dataToSave === true) {
             $package->saveAll();

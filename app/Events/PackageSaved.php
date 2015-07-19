@@ -12,14 +12,14 @@ class PackageSaved extends Event implements ShouldBroadcast
     /**
      * @var Package
      */
-    private $data;
+    public $data;
 
     /**
      * Create a new event instance.
      *
      * @param Package $data
      */
-    public function __construct(Package $data)
+    public function __construct($data)
     {
         $this->data = $data;
     }
@@ -31,10 +31,6 @@ class PackageSaved extends Event implements ShouldBroadcast
      */
     public function broadcastOn()
     {
-        if($this->data->getParams()->has('event')) {
-            return [$this->data->getParams()->get('event')['channel']];
-        }
-
-        return [];
+        return [$this->data['channel']];
     }
 }
