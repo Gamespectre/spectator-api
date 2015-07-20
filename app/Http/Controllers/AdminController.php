@@ -18,24 +18,36 @@ class AdminController extends Controller
      * @var GameRepository
      */
     private $game;
-    /**
-     * @var GiantBombSource
-     */
-    private $source;
 
-    public function __construct(GameRepository $game, GiantBombSource $source)
+    public function __construct(GameRepository $game)
     {
         $this->game = $game;
-        $this->source = $source;
     }
+
+    /*
+     *  Games actions
+     */
 
     public function postAddGame(Request $request)
     {
         $channel = 'gameadd';
-
         $query = $request->input('query');
-        $method = $request->input('method');
+        $method = 'get';
 
+        return $this->getGames($channel, $method, $query);
+    }
+
+    public function postSearchGame(Request $request)
+    {
+        $channel = 'gamesearch';
+        $query = $request->input('query');
+        $method = 'search';
+
+        return $this->getGames($channel, $method, $query);
+    }
+
+    private function getGames($channel, $method, $query)
+    {
         event(new GameSearch([
             'query' => $query,
             'method' => $method,
@@ -44,6 +56,10 @@ class AdminController extends Controller
 
         return \Response::json(['channel' => $channel]);
     }
+
+    /*
+     *  Content actions
+     */
 
     public function postGameContent(Request $request)
     {
@@ -59,6 +75,10 @@ class AdminController extends Controller
 
         return \Response::json(['channel' => $channel]);
     }
+
+    /*
+     *  Package actions
+     */
 
     public function postGetPackageData(Request $request)
     {

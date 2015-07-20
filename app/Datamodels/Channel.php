@@ -28,6 +28,7 @@ class Channel extends Datamodel {
 
 	public function relatesToGame(Game $model)
 	{
+		$this->model->games()->detach($model->id);
 		$this->model->games()->attach($model->id);
 		return $this->model;
 	}
