@@ -5,6 +5,7 @@ namespace Spectator\Services\Game;
 use Cache;
 use Spectator\Datamodels\Game;
 use Spectator\Events\Game\GameRetrieved;
+use Spectator\Repositories\GameRepository;
 use Spectator\Services\ApiService;
 use Spectator\Sources\GiantBombSource;
 use Spectator\Traits\PackagesData;
@@ -30,7 +31,8 @@ class GameService extends ApiService
 
     public function getGameByID($id, $force = false)
     {
-        if($force === true) {
+        if($force === true)
+        {
             Cache::forget($id);
         }
 
@@ -43,7 +45,8 @@ class GameService extends ApiService
 
     public function searchGame($query, $force = false)
     {
-        if($force === true) {
+        if($force === true)
+        {
             Cache::forget($query);
         }
 

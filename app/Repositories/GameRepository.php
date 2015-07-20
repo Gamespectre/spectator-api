@@ -25,7 +25,7 @@ class GameRepository implements RepositoryInterface {
 		$game = null;
 
         if(is_numeric($identifier)) {
-            $game = Game::where('id', $identifier)
+            $game = Game::where('id', $identifier)->orWhere('api_id', $identifier)
                     ->with('videos', 'creators', 'series')->first();
         }
         else {

@@ -30,7 +30,8 @@ abstract class Datamodel implements \JsonSerializable {
 	public static function createData(Collection $rawCollection)
 	{
 		$datamodels = $rawCollection->map(function($item, $key) {
-            return new static($item);
+            $datamodel = new static($item);
+            return $datamodel->isPersisted() ? false : $datamodel;
         });
 
 		return $datamodels;

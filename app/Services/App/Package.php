@@ -112,7 +112,9 @@ abstract class Package implements \JsonSerializable {
     {
         if($serviceName !== false && $this->services->has($serviceName))
         {
-            return $this->services->get($serviceName)->getData();
+            return $this->services->get($serviceName)->getData()->reject(function($item) {
+                return $item === false;
+            });
         }
         else if($serviceName === false) {
             return $this->services;
@@ -159,7 +161,9 @@ abstract class Package implements \JsonSerializable {
     public function serialize()
     {
         return $this->services->map(function($item, $key) {
-            return $item->getData();
+            return $item->getData()->reject(function($item) {
+                return $item === false;
+            });
         })->merge($this->_params->all())->put('id', $this->packageId)->toArray();
     }
 
