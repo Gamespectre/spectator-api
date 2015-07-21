@@ -22,4 +22,9 @@ class Creator extends Model {
 	{
 		return $this->belongsToMany('Spectator\Game');
 	}
+
+	public function user()
+	{
+		return $this->belongsTo('Spectator\User');
+	}
 }

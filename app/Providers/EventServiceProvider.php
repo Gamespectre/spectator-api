@@ -13,6 +13,11 @@ class EventServiceProvider extends ServiceProvider
      * @var array
      */
     protected $listen = [
+        // Socialite
+        'SocialiteProviders\Manager\SocialiteWasCalled' => [
+            'SocialiteProviders\YouTube\YouTubeExtendSocialite@handle'
+        ],
+
         // Search
         'Spectator\Events\Game\Search' => [
             'Spectator\Listeners\Game\SearchHandler'

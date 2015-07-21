@@ -2,10 +2,15 @@
 
 namespace Spectator\Http\Controllers\Auth;
 
+use Auth;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
+use Illuminate\Http\Request;
+use JWTAuth;
+use Spectator\Events\UserSignedIn;
 use Spectator\Http\Controllers\Controller;
-use Spectator\User;
-use Validator;
+use Spectator\Repositories\UserRepository;
+use JWTFactory;
+use Spectator\Services\App\AuthService;
 
 class AuthController extends Controller
 {
@@ -22,43 +27,100 @@ class AuthController extends Controller
 
     use AuthenticatesAndRegistersUsers;
 
-    protected $redirectPath = '/';
-
     /**
-     * Create a new authentication controller instance.
+     * @var UserRepository
      */
-    public function __construct()
+    private $user;
+    /**
+     * @var AuthService
+     */
+    private $authService;
+
+    public function __construct(UserRepository $user, AuthService $authService)
     {
-        $this->middleware('guest', ['except' => 'getLogout']);
+        $this->middleware('guest', ['except' => [
+            'getLogout',
+            'user',
+            'startLogin',
+            'token',
+            'query'
+        ]]);
+
+        $this->user = $user;
+        $this->authService = $authService;
     }
 
-    /**
-     * Get a validator for an incoming registration request.
-     *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
-     */
-    protected function validator(array $data)
+    public function token()
     {
-        return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|confirmed|min:6',
+        $token = $this->authService->createToken();
+
+        return response()->json([
+            'success' => true,
+            'token' => $token
+        ]);
+    }
+
+    public function query()
+    {
+        $token = JWTAuth::parseToken();
+        $user = $this->authService->queryToken($token);
+
+        return response()->json([
+            'success' => true,
+            'user' => $user['user'],
+            'auth' => $user['auth']
         ]);
     }
 
     /**
-     * Create a new user instance after a valid registration.
-     *
-     * @param  array  $data
-     * @return User
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    protected function create(array $data)
+    public function startLogin(Request $request)
     {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
+        $channel = 'userlogin-' . uniqid();
+        session(['channel' => $channel]);
+
+        return response()->json([
+            'success' => true,
+            'channel' => $channel
         ]);
+    }
+
+    public function user()
+    {
+        $channel = session('channel');
+        $token = $this->authService->createToken();
+        $user = Auth::user();
+
+        // TODO: Set auth to user level
+
+        event(new UserSignedIn([
+            'user' => $user,
+            'token' => $token,
+            'auth' => 'user'
+        ], $channel));
+
+        return "User signed in. Channel: " . $channel;
+    }
+
+    public function redirectToProvider()
+    {
+        return \Socialite::with('youtube')->redirect();
+    }
+
+    public function handleProviderCallback()
+    {
+        try {
+            $user = \Socialite::with('youtube')->user();
+        } catch (Exception $e) {
+            return redirect('api/auth/youtube');
+        }
+
+        $authUser = $this->user->findOrCreateUser($user);
+
+        Auth::login($authUser, true);
+
+        return redirect('api/auth/user');
     }
 }

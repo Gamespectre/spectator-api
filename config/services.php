@@ -35,4 +35,10 @@ return [
         'secret' => '',
     ],
 
+    'youtube' => [
+        'redirect' => getenv('GOOGLE_CALLBACK'),
+        'client_id' => getenv('GOOGLE_OAUTH_ID'),
+        'client_secret' => getenv('GOOGLE_OAUTH_SECRET'),
+    ]
+
 ];

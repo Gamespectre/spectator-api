@@ -145,7 +145,9 @@ return [
         Spectator\Providers\AppServiceProvider::class,
         Spectator\Providers\EventServiceProvider::class,
         Spectator\Providers\RouteServiceProvider::class,
-        'Barryvdh\Cors\ServiceProvider',
+        Barryvdh\Cors\ServiceProvider::class,
+        'SocialiteProviders\Manager\ServiceProvider',
+        'Tymon\JWTAuth\Providers\JWTAuthServiceProvider',
 
     ],
 
@@ -195,6 +197,9 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View'      => Illuminate\Support\Facades\View::class,
         'Debugbar'  => Barryvdh\Debugbar\Facade::class,
+        'Socialite' => Laravel\Socialite\Facades\Socialite::class,
+        'JWTAuth'   => 'Tymon\JWTAuth\Facades\JWTAuth',
+        'JWTFactory' => 'Tymon\JWTAuth\Facades\JWTFactory',
 
     ],
 

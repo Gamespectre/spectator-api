@@ -17,7 +17,10 @@
         "barryvdh/laravel-ide-helper": "^2.0@dev",
         "barryvdh/laravel-cors": "^0.7.0@dev",
         "pusher/pusher-php-server": "dev-master",
-        "guzzlehttp/guzzle": "~6.0"
+        "guzzlehttp/guzzle": "~6.0",
+        "laravel/socialite": "~2.0",
+        "socialiteproviders/youtube": "^1.1",
+        "tymon/jwt-auth": "^0.5.4"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",

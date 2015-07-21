@@ -20,6 +20,7 @@ class CreateCreatorsTable extends Migration
             $table->string('image_url');
             $table->string('avatar_url');
             $table->string('channel_id')->unique();
+            $table->string('user_id')->nullable();
             $table->timestamp('birthday');
             $table->timestamps();
         });

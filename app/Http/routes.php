@@ -3,13 +3,12 @@
 use Illuminate\Routing\Router;
 
 // Authentication routes...
-Route::get('auth/login', 'Auth\AuthController@getLogin');
-Route::post('auth/login', 'Auth\AuthController@postLogin');
-Route::get('auth/logout', 'Auth\AuthController@getLogout');
-
-Route::get('/', function() {
-	return "Please use an endpoint.";
-});
+Route::get('auth/init', 'Auth\AuthController@startLogin');
+Route::get('auth/youtube', 'Auth\AuthController@redirectToProvider');
+Route::get('auth/oauth_callback', 'Auth\AuthController@handleProviderCallback');
+Route::get('auth/user', 'Auth\AuthController@user');
+Route::get('auth/token', 'Auth\AuthController@token');
+Route::get('auth/query', 'Auth\AuthController@query');
 
 Route::group(['middleware' => 'cors'], function(Router $router) {
 	$router->controller('admin', 'AdminController');
@@ -18,4 +17,8 @@ Route::group(['middleware' => 'cors'], function(Router $router) {
 	$router->controller('series', 'SeriesController');
 	$router->controller('creator', 'CreatorController');
 	$router->controller('search', 'SearchController');
+});
+
+Route::get('/', function() {
+    return "Please use an endpoint.";
 });
