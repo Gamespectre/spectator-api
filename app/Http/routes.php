@@ -6,9 +6,11 @@ use Illuminate\Routing\Router;
 Route::get('auth/init', 'Auth\AuthController@startLogin');
 Route::get('auth/youtube', 'Auth\AuthController@redirectToProvider');
 Route::get('auth/oauth_callback', 'Auth\AuthController@handleProviderCallback');
-Route::get('auth/user', 'Auth\AuthController@user');
 Route::get('auth/token', 'Auth\AuthController@token');
-Route::get('auth/query', 'Auth\AuthController@query');
+
+Route::group(['middleware' => 'jwt.refresh'], function(Router $router) {
+    $router->get('auth/query', 'Auth\AuthController@query');
+});
 
 Route::group(['middleware' => 'cors'], function(Router $router) {
 	$router->controller('admin', 'AdminController');

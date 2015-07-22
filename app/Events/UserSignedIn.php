@@ -28,7 +28,6 @@ class UserSignedIn extends Event implements ShouldBroadcast
     {
         $this->data = [
             'user' => $data['user'],
-            'auth' => $data['auth'],
             'token' => $data['token']
         ];
 

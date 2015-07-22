@@ -6,7 +6,7 @@ use Auth;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
 use JWTAuth;
-use Spectator\Events\UserSignedIn;
+use Socialite;
 use Spectator\Http\Controllers\Controller;
 use Spectator\Repositories\UserRepository;
 use JWTFactory;
@@ -14,17 +14,6 @@ use Spectator\Services\App\AuthService;
 
 class AuthController extends Controller
 {
-    /*
-    |--------------------------------------------------------------------------
-    | Registration & Login Controller
-    |--------------------------------------------------------------------------
-    |
-    | This controller handles the registration of new users, as well as the
-    | authentication of existing users. By default, this controller uses
-    | a simple trait to add these behaviors. Why don't you explore it?
-    |
-    */
-
     use AuthenticatesAndRegistersUsers;
 
     /**
@@ -38,16 +27,13 @@ class AuthController extends Controller
 
     public function __construct(UserRepository $user, AuthService $authService)
     {
-        $this->middleware('guest', ['except' => [
-            'getLogout',
-            'user',
-            'startLogin',
-            'token',
-            'query'
-        ]]);
-
         $this->user = $user;
         $this->authService = $authService;
+
+        $this->middleware('guest', ['only' => [
+            'redirectToProvider',
+            'handleProviderCallback'
+        ]]);
     }
 
     public function token()
@@ -62,13 +48,11 @@ class AuthController extends Controller
 
     public function query()
     {
-        $token = JWTAuth::parseToken();
-        $user = $this->authService->queryToken($token);
+        $user = $this->authService->queryToken();
 
         return response()->json([
             'success' => true,
-            'user' => $user['user'],
-            'auth' => $user['auth']
+            'user' => $user
         ]);
     }
 
@@ -87,40 +71,22 @@ class AuthController extends Controller
         ]);
     }
 
-    public function user()
-    {
-        $channel = session('channel');
-        $token = $this->authService->createToken();
-        $user = Auth::user();
-
-        // TODO: Set auth to user level
-
-        event(new UserSignedIn([
-            'user' => $user,
-            'token' => $token,
-            'auth' => 'user'
-        ], $channel));
-
-        return "User signed in. Channel: " . $channel;
-    }
-
     public function redirectToProvider()
     {
-        return \Socialite::with('youtube')->redirect();
+        return Socialite::with('youtube')->redirect();
     }
 
     public function handleProviderCallback()
     {
         try {
-            $user = \Socialite::with('youtube')->user();
+            $user = Socialite::with('youtube')->user();
         } catch (Exception $e) {
             return redirect('api/auth/youtube');
         }
 
         $authUser = $this->user->findOrCreateUser($user);
+        $this->authService->userSignedIn($authUser);
 
-        Auth::login($authUser, true);
-
-        return redirect('api/auth/user');
+        return $authUser->name . " logged in successfully. This window will close in a moment.";
     }
 }
