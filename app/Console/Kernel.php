@@ -16,6 +16,7 @@ class Kernel extends ConsoleKernel
         \Spectator\Console\Commands\GetGame::class,
         \Spectator\Console\Commands\GetVideos::class,
         \Spectator\Console\Commands\CreateBaseUser::class,
+        \Spectator\Console\Commands\CreateAnonUser::class,
     ];
 
     /**

@@ -2,6 +2,7 @@
 
 namespace Spectator\Repositories;
 
+use Spectator\Role;
 use Spectator\User;
 
 class UserRepository
@@ -31,5 +32,21 @@ class UserRepository
             'avatar' => $userData->avatar,
             'token' => $userData->token
         ]);
+    }
+
+    public function createFromArray(array $userData)
+    {
+        return $this->user->firstOrCreate($userData);
+    }
+
+    public function setRole(User $user, array $role)
+    {
+        $roleModels = Role::whereIn('level', $role)->get();
+
+        $user->roles()->sync($roleModels->map(function($role) {
+            return $role->id;
+        })->toArray());
+
+        return $user;
     }
 }
