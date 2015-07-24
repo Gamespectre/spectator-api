@@ -42,11 +42,15 @@ class Handler extends ExceptionHandler
         if ($e instanceof Tymon\JWTAuth\Exceptions\TokenExpiredException) {
             return response()->json([
                 'success' => false,
-                'message' => 'token_expired'], $e->getStatusCode());
+                'error' => 'token_expired'], $e->getStatusCode());
         } else if ($e instanceof Tymon\JWTAuth\Exceptions\TokenInvalidException) {
             return response()->json([
                 'success' => false,
-                'message' => 'token_invalid'], $e->getStatusCode());
+                'error' => 'token_invalid'], $e->getStatusCode());
+        } else if ($e instanceof PackageNotFoundException) {
+            return response()->json([
+                'success' => false,
+                'error' => 'Package not found!']);
         }
 
         return parent::render($request, $e);

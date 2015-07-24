@@ -4,18 +4,14 @@ namespace Spectator\Services\Game;
 
 use Cache;
 use Spectator\Datamodels\Game;
-use Spectator\Events\Game\GameRetrieved;
 use Spectator\Repositories\GameRepository;
 use Spectator\Services\ApiService;
 use Spectator\Sources\GiantBombSource;
-use Spectator\Traits\PackagesData;
 
 set_time_limit(0);
 
 class GameService extends ApiService
 {
-    use PackagesData;
-
     private $source;
     protected $event = GameRetrieved::class;
 

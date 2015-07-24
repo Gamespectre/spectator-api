@@ -1,17 +1,15 @@
 <?php
 
-namespace Spectator\Listeners\Youtube;
+namespace Spectator\Listeners;
 
-use Spectator\Events\Youtube\PlaylistsRetrieved;
+use Spectator\Events\PackageError;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class PlaylistsHandler
+class PackageErrorHandler implements ShouldQueue
 {
     /**
      * Create the event listener.
-     *
-     * @return void
      */
     public function __construct()
     {
@@ -21,11 +19,12 @@ class PlaylistsHandler
     /**
      * Handle the event.
      *
-     * @param  PlaylistsRetrieved  $event
+     * @param  PackageError  $event
      * @return void
      */
-    public function handle(PlaylistsRetrieved $event)
+    public function handle(PackageError $event)
     {
-        $event->data->packNext();
+        $packageId = $event->package->packageId;
+        \Cache::forget($packageId);
     }
 }

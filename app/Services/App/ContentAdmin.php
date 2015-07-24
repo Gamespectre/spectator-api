@@ -2,45 +2,119 @@
 
 namespace Spectator\Services\App;
 
-class ContentAdmin
-{
-    public function __construct()
+use Spectator\Events\PackageSaveStarted;
+use Spectator\Events\PackageStarted;
+use Spectator\Exceptions\PackageNotFoundException;
+use Spectator\Repositories\GameRepository;
+
+class ContentAdmin {
+
+    /**
+     * @var AuthService
+     */
+    private $auth;
+    /**
+     * @var GameRepository
+     */
+    private $game;
+
+    public function __construct(AuthService $auth, GameRepository $game)
     {
 
+        $this->auth = $auth;
+        $this->game = $game;
     }
 
-    public function addGame()
+    private function getChannelName($base)
     {
-
+        return uniqid() . '-' . $base;
     }
 
-    public function searchGame($query, $method)
+    public function getPackageData($id)
     {
-        $channel =
+        $packageData = \Cache::get($id);
+
+        if(is_null($packageData)) {
+            throw new PackageNotFoundException("Your package timed out, or might have never existed.");
+        }
+
+        $package = unserialize($packageData);
+        return $package->getData()->toArray();
+    }
+
+    public function savePackage($id, $data)
+    {
+        $packageData = \Cache::get($id);
+        $channel = $this->getChannelName('packagesave');
+
+        if(is_null($packageData)) {
+            throw new PackageNotFoundException("Your package timed out, or might have never existed.");
+        }
+
+        $package = unserialize($packageData);
+        $package->setChannel($channel);
+        $package->update($data);
+
+        event(new PackageSaveStarted($package));
+
+        return $channel;
+    }
+
+    public function addGame($query)
+    {
+        $channel = $this->getChannelName('gameadd');
+        $method = 'get';
+
+        event(new PackageStarted([
+            'query' => $query,
+            'method' => $method,
+            'channel' => $channel
+        ]));
+
+        return $channel;
+    }
+
+    public function searchGame($query)
+    {
+        $channel = $this->getChannelName('gamesearch');
+        $method = 'search';
+
         event(new GameSearch([
             'query' => $query,
             'method' => $method,
             'channel' => $channel
         ]));
+
+        return $channel;
     }
 
-    public function addPlaylist()
+    public function searchContent($query, $resource)
     {
+        $channel = $this->getChannelName('contentsearch');
 
+        $package = YoutubePackage::create([
+            'channel' => $channel,
+            'resource' => ['name' => $resource, 'method' => 'search'],
+            'query' => $query
+        ]);
+
+        event(new PackageStarted($package));
+
+        return $channel;
     }
 
-    public function searchPlaylist()
+    public function addContent($id, $resource)
     {
+        $channel = $this->getChannelName('contentadd');
 
-    }
+        $package = YoutubePackage::create([
+            'channel' => $channel,
+            'resource' => ['name' => $resource, 'method' => 'add'],
+            'query' => $id
+        ]);
 
-    public function addVideo()
-    {
+        event(new PackageStarted($package));
 
-    }
-
-    public function searchVideo()
-    {
-
+        return $channel;
     }
 }

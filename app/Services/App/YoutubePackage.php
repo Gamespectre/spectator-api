@@ -3,30 +3,28 @@
 namespace Spectator\Services\App;
 
 use Illuminate\Support\Collection;
+use Spectator\Events\PackageSaved;
 use Spectator\Repositories\YoutubeRepository;
 
 class YoutubePackage extends Package
 {
-    protected $requiredParams = ['game'];
-
-    public function saveOnly(Collection $data)
-    {
-        $data = $this->services->map(function($service, $key) {
-            return $service->getData();
-        });
-
-        \App::make(YoutubeRepository::class)->saveAll($data, $this->_params->get('game'));
-    }
+    // List of registered services and their Service Container binding name
+    protected $handlers = [
+        'playlist' => 'playlist',
+        'video' => 'video',
+        'channel' => 'channel'
+    ];
 
     /**
      * Saves all datamodels in all services to the database.
      */
-    public function saveAll()
+    public function save()
     {
-        $data = $this->services->map(function($service, $key) {
-            return $service->getData();
-        });
+        $data = $this->getData();
+        $repo = \App::make(YoutubeRepository::class);
 
-        \App::make(YoutubeRepository::class)->saveAll($data, $this->_params->get('game'));
+        call_user_func([$repo, 'save' . ucfirst(str_plural($this->_params->get('resource')['name']))], $data);
+
+        event(new PackageSaved($this));
     }
 }

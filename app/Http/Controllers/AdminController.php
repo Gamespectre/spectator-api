@@ -3,6 +3,7 @@
 namespace Spectator\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Response;
 use Spectator\Events\Game\Search as GameSearch;
 use Spectator\Events\SaveCachedPackage;
 use Spectator\Events\SavePackage;
@@ -37,43 +38,48 @@ class AdminController extends Controller
     public function postAddGame(Request $request)
     {
         $query = $request->input('query');
-
         $channel = $this->admin->addGame($query);
 
-        return \Response::json(['channel' => $channel]);
+        return response()->json(['channel' => $channel]);
     }
 
     public function postSearchGame(Request $request)
     {
         $query = $request->input('query');
-
         $channel = $this->admin->searchGame($query);
 
-        return \Response::json(['channel' => $channel]);
+        return response()->json(['channel' => $channel]);
     }
 
     /*
      *  Content actions
      */
 
-    public function postSearchPlaylists(Request $request)
+    public function postSearchContent(Request $request)
     {
-        $game = $request->input('query');
-        $gameModel = $this->game->get((int) $game);
+        $query = $request->input('query');
+        $resource = $request->input('resource');
 
-        $channel = $this->admin->searchPlaylist($gameModel);
+        $channel = $this->admin->searchContent($query, $resource);
 
-        return \Response::json(['channel' => $channel]);
+        return response()->json([
+            'success' => true,
+            'channel' => $channel
+        ]);
     }
 
-    private function getYoutubeContent()
+
+    public function postAddContent(Request $request)
     {
-        event(new YoutubeSearch([
-            'game' => $gameModel,
+        $resourceId = $request->input('query');
+        $resource = $request->input('resource');
+
+        $channel = $this->admin->addContent($resourceId, $resource);
+
+        return response()->json([
+            'success' => true,
             'channel' => $channel
-        ]));
-
-
+        ]);
     }
 
     /*
@@ -83,35 +89,25 @@ class AdminController extends Controller
     public function postGetPackageData(Request $request)
     {
         $packageId = $request->input('packageId');
-        $packageData = \Cache::get($packageId);
 
-        if(is_null($packageData)) {
-            return \Response::json([
-                "success" => false,
-                "message" => "Your package timed out, or might have never existed."
-            ]);
-        }
+        $data = $this->admin->getPackageData($packageId);
 
-        $package = unserialize($packageData);
-        $data = $package->getServices()->map(function($service, $key) {
-            return $service->getData();
-        })->toArray();
-
-        return \Response::json($data);
+        return response()->json([
+            'success' => true,
+            'data' => $data
+        ]);
     }
 
     public function postSavePackage(Request $request)
     {
         $packageId = $request->input('packageId');
         $saveDatamodels = $request->input('saveData');
-        $channel = 'packagesave';
 
-        event(new SaveCachedPackage([
-            'package' => $packageId,
-            'channel' => $channel,
-            'data' => $saveDatamodels
-        ]));
+        $channel = $this->admin->savePackage($packageId, $saveDatamodels);
 
-        return \Response::json(['channel' => $channel]);
+        return response()->json([
+            'success' => true,
+            'channel' => $channel
+        ]);
     }
 }

@@ -2,10 +2,11 @@
 
 namespace Spectator\Listeners;
 
+use Spectator\Events\PackageSaveStarted;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Spectator\Events\PackageDone;
 
-class PackageDoneHandler
+class PackageSaveHandler implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -18,12 +19,11 @@ class PackageDoneHandler
     /**
      * Handle the event.
      *
-     * @param  PackageDone  $event
+     * @param  PackageSaveStarted  $event
      * @return void
      */
-    public function handle(PackageDone $event)
+    public function handle(PackageSaveStarted $event)
     {
-        $packageId = $event->data->packageId;
-        \Cache::put($packageId, serialize($event->data), 15);
+        $event->package->save();
     }
 }

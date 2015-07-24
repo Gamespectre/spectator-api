@@ -1,12 +1,12 @@
 <?php
 
-namespace Spectator\Listeners\Game;
+namespace Spectator\Listeners;
 
-use Spectator\Events\Game\GameRetrieved;
+use Spectator\Events\PackageSaved;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class GamesHandler
+class PackageSavedHandler implements ShouldQueue
 {
     /**
      * Create the event listener.
@@ -19,11 +19,12 @@ class GamesHandler
     /**
      * Handle the event.
      *
-     * @param  GameRetrieved  $event
+     * @param  PackageSaved  $event
      * @return void
      */
-    public function handle(GameRetrieved $event)
+    public function handle(PackageSaved $event)
     {
-        //dd($event);
+        $packageId = $event->package->packageId;
+        \Cache::forget($packageId);
     }
 }

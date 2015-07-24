@@ -32,7 +32,9 @@ abstract class Datamodel implements \JsonSerializable {
 		$datamodels = $rawCollection->map(function($item, $key) {
             $datamodel = new static($item);
             return $datamodel->isPersisted() ? false : $datamodel;
-        });
+        })->filter(function($datamodel) {
+            return $datamodel !== false;
+        })->flatten();
 
 		return $datamodels;
 	}
@@ -60,7 +62,7 @@ abstract class Datamodel implements \JsonSerializable {
 			}
 		});
 
-		$this->model = \App::make($this->modelClass)->create($props);
+		$this->model = \App::make($this->modelClass)->firstOrCreate($props);
 		return $this->model;
 	}
 
@@ -135,8 +137,9 @@ abstract class Datamodel implements \JsonSerializable {
 
     public function __sleep()
     {
-        return ["model", "_internalData"];
+        return ["model", "_internalData", "uniqueKey"];
     }
 
 	abstract public function transform($raw);
+	abstract public function update($props);
 }

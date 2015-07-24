@@ -5,17 +5,12 @@ namespace Spectator\Services\Youtube;
 use Cache;
 use Illuminate\Support\Collection;
 use Spectator\Datamodels\Video;
-use Spectator\Events\Youtube\VideosRetrieved;
-use Spectator\Interfaces\PackageHandler;
 use Spectator\Services\ApiService;
 use Spectator\Sources\YoutubeSource;
-use Spectator\Traits\PackagesData;
 
 set_time_limit(0);
 
-class VideoService extends ApiService implements PackageHandler {
-
-	use PackagesData;
+class VideoService extends ApiService {
 
 	private $source;
     protected $event = VideosRetrieved::class;

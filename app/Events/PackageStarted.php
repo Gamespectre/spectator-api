@@ -4,14 +4,13 @@ namespace Spectator\Events;
 
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Queue\SerializesModels;
+use Spectator\Events\Event;
 use Spectator\Services\App\Package;
 
-class PackageSaved extends Event implements ShouldBroadcast
+class PackageStarted extends Event implements ShouldBroadcast
 {
     use SerializesModels;
-    /**
-     * @var Package
-     */
+
     public $package;
 
     /**
@@ -19,7 +18,7 @@ class PackageSaved extends Event implements ShouldBroadcast
      *
      * @param Package $package
      */
-    public function __construct($package)
+    public function __construct(Package $package)
     {
         $this->package = $package;
     }

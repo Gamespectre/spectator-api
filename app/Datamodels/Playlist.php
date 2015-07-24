@@ -11,6 +11,7 @@ class Playlist extends Datamodel {
 
 	public $uniqueKey = 'playlist_id';
 	protected $modelClass = Series::class;
+    public $relatedGame = null;
 
 	public function __construct($data = [])
 	{
@@ -40,4 +41,18 @@ class Playlist extends Datamodel {
 			'publishedAt' => [Carbon::parse($raw->snippet->publishedAt), 'published_at'],
 		];
 	}
+
+    public function update($props)
+    {
+        if(isset($props['game'])) {
+            $this->relatedGame = $props['game'];
+        }
+
+        return $this;
+	}
+
+    public function __sleep()
+    {
+        return ["model", "_internalData", "uniqueKey", "relatedGame"];
+    }
 }

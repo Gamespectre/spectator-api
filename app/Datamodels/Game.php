@@ -25,6 +25,11 @@ class Game extends Datamodel
         ];
     }
 
+    public function update($props)
+    {
+        return $this;
+    }
+
     private function safe($array)
     {
         return function($key, $fallback) use ($array)

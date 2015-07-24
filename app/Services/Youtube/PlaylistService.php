@@ -13,15 +13,13 @@ use Spectator\Traits\PackagesData;
 
 set_time_limit(0);
 
-class PlaylistService extends ApiService implements PackageHandler {
-
-    use PackagesData;
+class PlaylistService extends ApiService {
 
 	private $source;
-    protected $event = PlaylistsRetrieved::class;
 
     public $actions = [
-        'search' => 'searchPlaylists'
+        'search' => 'searchPlaylists',
+        'add' => 'getPlaylist'
     ];
 
 	public function __construct(YoutubeSource $source)
@@ -38,7 +36,6 @@ class PlaylistService extends ApiService implements PackageHandler {
 	public function updatePlaylist($playlistId)
 	{
 		$playlist = $this->getPlaylist($playlistId, true);
-
         return $playlist;
 	}
 
@@ -62,37 +59,26 @@ class PlaylistService extends ApiService implements PackageHandler {
 		return Playlist::createData(collect($results['items']));
 	}
 
-	public function searchPlaylists($query, $playlistsToGet, $force = false)
+	public function searchPlaylists($query, $force = false)
 	{
-		$chunk = $playlistsToGet > 50 ? 50 : $playlistsToGet;
-		$pager = new YoutubeApiPager($playlistsToGet, $chunk, true);
-		$results = collect([]);
+		$params = [
+			'type' => 'playlist',
+			'maxResults' => 50,
+			'part' => 'id, snippet',
+			'q' => $query
+		];
 
-		$pager->page(function($pager) use (&$results, $query, $force) {
-			$params = [
-				'type' => 'playlist',
-				'maxResults' => $pager->getChunk(),
-				'part' => 'id, snippet',
-				'pageToken' => $pager->getToken(),
-				'q' => $query
-			];
+		$cacheKey = $query . ':playlists';
 
-			$cacheKey = $query . ':playlists:' . $pager->getPage();
+		if($force === true) {
+			Cache::forget($cacheKey);
+		}
 
-			if($force === true) {
-				Cache::forget($cacheKey);
-			}
-
-			$apiData = Cache::remember($cacheKey, env('API_CACHE_MINUTES', 720), function() use ($params) {
-				return $this->source->search($params);
-			});
-
-			$results = $results->merge($apiData['items']);
-
-			return $apiData;
+		$results = Cache::remember($cacheKey, env('API_CACHE_MINUTES', 720), function() use ($params) {
+			return $this->source->search($params);
 		});
 
-		return Playlist::createData($results);
+		return Playlist::createData(collect($results['items']));
 	}
 
 }

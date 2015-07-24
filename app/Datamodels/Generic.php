@@ -16,4 +16,9 @@ class Generic extends Datamodel
             'id' => [$array['id'], 0]
         ];
     }
+
+    public function update($props)
+    {
+        return $this;
+    }
 }

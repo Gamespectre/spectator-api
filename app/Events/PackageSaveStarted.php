@@ -2,11 +2,12 @@
 
 namespace Spectator\Events;
 
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Spectator\Events\Event;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Spectator\Services\App\Package;
 
-class PackageSaved extends Event implements ShouldBroadcast
+class PackageSaveStarted extends Event implements ShouldBroadcast
 {
     use SerializesModels;
     /**
@@ -19,7 +20,7 @@ class PackageSaved extends Event implements ShouldBroadcast
      *
      * @param Package $package
      */
-    public function __construct($package)
+    public function __construct(Package $package)
     {
         $this->package = $package;
     }

@@ -19,31 +19,29 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         // Search
-        'Spectator\Events\Game\Search' => [
-            'Spectator\Listeners\Game\SearchHandler'
-        ],
-        'Spectator\Events\Youtube\Search' => [
-            'Spectator\Listeners\Youtube\SearchHandler'
+        'Spectator\Events\PackageStarted' => [
+            'Spectator\Listeners\PackageStartHandler'
         ],
 
         // Resources
-        'Spectator\Events\Game\GameRetrieved' => [
-            'Spectator\Listeners\Game\GamesHandler'
+        'Spectator\Events\PackageDataRetrieved' => [
+            'Spectator\Listeners\PackageDataRetrievedHandler'
         ],
-        'Spectator\Events\PackageDone' => [
-            'Spectator\Listeners\PackageDoneHandler'
+
+        // Saving
+        'Spectator\Events\PackageSaveStarted' => [
+            'Spectator\Listeners\PackageSaveHandler'
         ],
-        'Spectator\Events\SaveCachedPackage' => [
-            'Spectator\Listeners\PackageCacheSaveHandler'
+        'Spectator\Events\PackageSaved' => [
+            'Spectator\Listeners\PackageSavedHandler'
         ],
-        'Spectator\Events\Youtube\PlaylistsRetrieved' => [
-            'Spectator\Listeners\Youtube\PlaylistsHandler'
+
+        // It's not gone well
+        'Spectator\Events\PackageError' => [
+            'Spectator\Listeners\PackageErrorHandler'
         ],
-        'Spectator\Events\Youtube\VideosRetrieved' => [
-            'Spectator\Listeners\Youtube\VideosHandler'
-        ],
-        'Spectator\Events\Youtube\ChannelsRetrieved' => [
-            'Spectator\Listeners\Youtube\ChannelsHandler'
+        'Spectator\Events\PackageEmpty' => [
+            'Spectator\Listeners\PackageErrorHandler'
         ],
     ];
 

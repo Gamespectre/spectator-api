@@ -26,6 +26,11 @@ class Channel extends Datamodel {
 		];
 	}
 
+	public function update($props)
+	{
+        return $this;
+	}
+
 	public function relatesToGame(Game $model)
 	{
 		$this->model->games()->detach($model->id);

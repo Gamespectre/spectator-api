@@ -2,11 +2,12 @@
 
 namespace Spectator\Events;
 
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Spectator\Events\Event;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Spectator\Services\App\Package;
 
-class PackageSaved extends Event implements ShouldBroadcast
+class PackageEmpty extends Event implements ShouldBroadcast
 {
     use SerializesModels;
     /**
@@ -16,19 +17,13 @@ class PackageSaved extends Event implements ShouldBroadcast
 
     /**
      * Create a new event instance.
-     *
      * @param Package $package
      */
-    public function __construct($package)
+    public function __construct(Package $package)
     {
         $this->package = $package;
     }
 
-    /**
-     * Get the channels the event should be broadcast on.
-     *
-     * @return array
-     */
     public function broadcastOn()
     {
         return [$this->package->getChannel()];
@@ -37,7 +32,7 @@ class PackageSaved extends Event implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            "success" => true,
+            "success" => false,
             "id" => $this->package->packageId,
             "channel" => $this->package->getChannel()
         ];

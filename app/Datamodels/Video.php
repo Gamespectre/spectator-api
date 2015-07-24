@@ -12,6 +12,7 @@ class Video extends Datamodel {
 
 	public $uniqueKey = 'video_id';
 	protected $modelClass = VideoModel::class;
+    public $relatedGame = null;
 
 	public function __construct($data = [])
 	{
@@ -30,6 +31,15 @@ class Video extends Datamodel {
 			'publishedAt' => [Carbon::parse($raw->snippet->publishedAt), 'published_at'],
 			'imageUrl' => [$raw->snippet->thumbnails->high->url, 'image_url'],
 		];
+	}
+
+	public function update($props)
+	{
+        if(isset($props['game'])) {
+            $this->relatedGame = $props['game'];
+        }
+
+        return $this;
 	}
 
 	public function relatesToGame(Game $model)

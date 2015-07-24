@@ -8,22 +8,9 @@ use Spectator\Repositories\GameRepository;
 class GamePackage extends Package
 {
 
-    public function saveAll()
+    public function save()
     {
-        $data = $this->getData('game');
+        $data = $this->getData();
         \App::make(GameRepository::class)->saveGames($data);
-    }
-
-    public function saveOnly(Collection $data)
-    {
-        $games = $this->getData('game');
-
-        $games->each(function($game) use ($data) {
-            $save = $data->get($game->id);
-
-            if($save) {
-                $game->persist();
-            }
-        });
     }
 }
