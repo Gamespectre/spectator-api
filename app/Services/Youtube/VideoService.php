@@ -26,6 +26,30 @@ class VideoService extends ApiService {
 		$this->source = $source;
 	}
 
+    public function searchVideos($query, $force = false)
+    {
+        $params = [
+            'type' => 'video',
+            'maxResults' => 50,
+            'part' => 'id, snippet',
+            'videoEmbeddable' => 'true',
+            'videoLicense' => 'any',
+            'q' => $query
+        ];
+
+        $cacheKey = $query . ':videos';
+
+        if($force === true) {
+            Cache::forget($cacheKey);
+        }
+
+        $results = Cache::remember($cacheKey, env('API_CACHE_MINUTES', 720), function() use ($params) {
+            return $this->source->search($params);
+        });
+
+        return Video::createData(collect($results[$results['collection_key']]));
+    }
+
 	public function getVideos(Collection $videoIds, $force = false)
 	{
 		return $this->getFromIds($videoIds, 'getVideo', $force);

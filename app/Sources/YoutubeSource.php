@@ -20,7 +20,11 @@ class YoutubeSource implements VideoSourceInterface {
 
 	public function search($params)
 	{
-		return $this->youtube->search->listSearch('id, snippet', $params);
+		$default = [
+			'safeSearch' => 'none'
+		];
+
+		return $this->youtube->search->listSearch('id, snippet', array_merge($params, $default));
 	}
 
 	public function getVideo($params)

@@ -21,13 +21,16 @@ class Video extends Datamodel {
 
 	public function transform($raw)
 	{
+        $order = isset($raw->order) ? $raw->order : 0;
+        $id = isset($raw->id) && is_string($raw->id) ? $raw->id : $raw->id->videoId;
+
 		return [
-			'id' => [$raw->id, 'video_id'],
+			'id' => [$id, 'video_id'],
 			'playlist' => [isset($raw->snippet->playlistId) ? $raw->snippet->playlistId : "", false],
 			'channel' => [$raw->snippet->channelId, false],
 			'title' => [$raw->snippet->title],
 			'description' => [$raw->snippet->description],
-			'order' => [$raw->order],
+			'order' => [$order],
 			'publishedAt' => [Carbon::parse($raw->snippet->publishedAt), 'published_at'],
 			'imageUrl' => [$raw->snippet->thumbnails->high->url, 'image_url'],
 		];

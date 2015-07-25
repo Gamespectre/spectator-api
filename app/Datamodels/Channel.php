@@ -13,12 +13,17 @@ class Channel extends Datamodel {
 
 	public function transform($raw)
 	{
-		$imageUrl = !isset($raw->brandingSettings->image->bannerImageUrl) ? "no image" : $raw->brandingSettings->image->bannerImageUrl;
+        $subscribers = isset($raw->statistics->subscriberCount) ? $raw->statistics->subscriberCount : 0;
+
+        $imageUrl = isset($raw->brandingSettings->image->bannerImageUrl) ? $raw->brandingSettings->image->bannerImageUrl :
+            isset($raw->snippet->thumbnails->high->url) ? $raw->snippet->thumbnails->high->url : "No image";
+
+        $id = isset($raw->id) && is_string($raw->id) ? $raw->id : $raw->id->channelId;
 
 		return [
-			'id' => [$raw->id, 'channel_id'],
+			'id' => [$id, 'channel_id'],
 			'name' => [$raw->snippet->title],
-			'subscribers' => [$raw->statistics->subscriberCount],
+			'subscribers' => [$subscribers],
 			'description' => [$raw->snippet->description],
 			'birthday' => [Carbon::parse($raw->snippet->publishedAt)],
 			'avatarUrl' => [$raw->snippet->thumbnails->high->url, 'avatar_url'],

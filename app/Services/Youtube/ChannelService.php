@@ -27,6 +27,28 @@ class ChannelService extends ApiService {
 		$this->source = $source;
 	}
 
+    public function searchCreators($query, $force = false)
+    {
+        $params = [
+            'type' => 'channel',
+            'maxResults' => 50,
+            'part' => 'id, snippet',
+            'q' => $query
+        ];
+
+        $cacheKey = $query . ':channels';
+
+        if($force === true) {
+            Cache::forget($cacheKey);
+        }
+
+        $results = Cache::remember($cacheKey, env('API_CACHE_MINUTES', 720), function() use ($params) {
+            return $this->source->search($params);
+        });
+
+        return Channel::createData(collect($results[$results['collection_key']]));
+    }
+
 	public function getCreators(Collection $channelIds, $force = false)
 	{
 		return $this->getFromIds($channelIds, 'getCreator', $force);
