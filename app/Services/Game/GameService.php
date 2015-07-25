@@ -16,7 +16,7 @@ class GameService extends ApiService
     protected $event = GameRetrieved::class;
 
     public $actions = [
-        'get' => 'getGameByID',
+        'add' => 'getGameByID',
         'search' => 'searchGame'
     ];
 

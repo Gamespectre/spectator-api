@@ -16,7 +16,10 @@ class ChannelService extends ApiService {
     protected $event = ChannelsRetrieved::class;
 
 	public $actions = [
-		'videos' => 'getCreatorsForVideos'
+		'videos' => 'getCreatorsForVideos',
+        'playlists' => 'getCreatorForPlaylist',
+		'search' => 'searchCreators',
+		'add' => 'getCreator'
 	];
 
 	public function __construct(YoutubeSource $source)

@@ -40,7 +40,10 @@ class AdminController extends Controller
         $query = $request->input('query');
         $channel = $this->admin->addGame($query);
 
-        return response()->json(['channel' => $channel]);
+        return response()->json([
+            'success' => true,
+            'channel' => $channel
+        ]);
     }
 
     public function postSearchGame(Request $request)
@@ -48,7 +51,10 @@ class AdminController extends Controller
         $query = $request->input('query');
         $channel = $this->admin->searchGame($query);
 
-        return response()->json(['channel' => $channel]);
+        return response()->json([
+            'success' => true,
+            'channel' => $channel
+        ]);
     }
 
     /*

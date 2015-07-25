@@ -63,13 +63,14 @@ class ContentAdmin {
     public function addGame($query)
     {
         $channel = $this->getChannelName('gameadd');
-        $method = 'get';
 
-        event(new PackageStarted([
+        $package = GamePackage::create([
+            'channel' => $channel,
             'query' => $query,
-            'method' => $method,
-            'channel' => $channel
-        ]));
+            'resource' => ['name' => 'game', 'method' => 'add']
+        ]);
+
+        event(new PackageStarted($package));
 
         return $channel;
     }
@@ -77,13 +78,14 @@ class ContentAdmin {
     public function searchGame($query)
     {
         $channel = $this->getChannelName('gamesearch');
-        $method = 'search';
 
-        event(new GameSearch([
+        $package = GamePackage::create([
+            'channel' => $channel,
             'query' => $query,
-            'method' => $method,
-            'channel' => $channel
-        ]));
+            'resource' => ['name' => 'game', 'method' => 'search']
+        ]);
+
+        event(new PackageStarted($package));
 
         return $channel;
     }

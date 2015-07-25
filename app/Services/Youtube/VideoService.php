@@ -16,7 +16,9 @@ class VideoService extends ApiService {
     protected $event = VideosRetrieved::class;
 
 	public $actions = [
-		'playlists' => 'getVideosForPlaylists'
+		'playlists' => 'getVideosForPlaylists',
+		'search' => 'searchVideos',
+		'add' => 'getVideo'
 	];
 
 	public function __construct(YoutubeSource $source)

@@ -84,7 +84,7 @@ class GameRepository implements RepositoryInterface {
 
     public function saveGames(Collection $gameData)
     {
-        $gameData->each(function($data, $key) {
+        $gameData->each(function($data) {
             $data->persist();
         });
     }

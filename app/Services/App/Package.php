@@ -44,7 +44,7 @@ abstract class Package implements \JsonSerializable {
 
         $this->data = $this->execService($service, $service->actions[$resource['method']]);
 
-        if(empty($this->data)) {
+        if(empty($this->data) || ($this->data->isEmpty())) {
             event(new PackageEmpty($this));
         }
         else {
@@ -57,12 +57,10 @@ abstract class Package implements \JsonSerializable {
 
         $this->data = $this->data->filter(function($item) use ($dataToKeep) {
             return $dataToKeep->has($item->id) &&
-                   $dataToKeep->get($item->id)['chosen'] === true;
-        });
-
-        $this->data->transform(function($item) use ($dataToKeep) {
-            $updated = $item->update($dataToKeep->get($item->id));
-            return $updated;
+                   (($dataToKeep->get($item->id)['chosen'] === true) ||
+                    ($dataToKeep->get($item->id) === true));
+        })->map(function($item) use ($dataToKeep) {
+            return $item->update($dataToKeep->get($item->id));
         });
     }
 

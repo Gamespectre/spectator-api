@@ -2,6 +2,7 @@
 
 namespace Spectator\Listeners;
 
+use Spectator\Events\Event;
 use Spectator\Events\PackageError;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -19,10 +20,9 @@ class PackageErrorHandler implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param  PackageError  $event
-     * @return void
+     * @param Event $event
      */
-    public function handle(PackageError $event)
+    public function handle(Event $event)
     {
         $packageId = $event->package->packageId;
         \Cache::forget($packageId);
