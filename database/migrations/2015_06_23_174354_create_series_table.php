@@ -15,6 +15,7 @@ class CreateSeriesTable extends Migration
         Schema::create('series', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name');
+            $table->string('channel_id');
             $table->string('playlist_id')->unique();
             $table->integer('game_id');
             $table->integer('creator_id');

@@ -4,6 +4,7 @@ namespace Spectator\Services\Youtube;
 
 use Cache;
 use Illuminate\Support\Collection;
+use Spectator\Datamodels\PlaylistItem;
 use Spectator\Datamodels\Video;
 use Spectator\Services\ApiService;
 use Spectator\Sources\YoutubeSource;
@@ -122,11 +123,10 @@ class VideoService extends ApiService {
 
 	public function getVideosInPlaylist($playlistId, $force = false)
 	{
-		$pager = new YoutubeApiPager(50, 50, false);
+		$pager = new YoutubeApiPager(50);
 		$results = collect([]);
-        $order = 0;
 
-		$pager->page(function($pager) use (&$results, $playlistId, &$order, $force) {
+		$pager->page(function($pager) use (&$results, $playlistId, $force) {
 
 			$params = [
 				'maxResults' => $pager->getChunk(),
@@ -140,25 +140,13 @@ class VideoService extends ApiService {
 				Cache::forget($cacheKey);
 			}
 
-			$playlistItemResults = Cache::remember($cacheKey, env('API_CACHE_MINUTES', 60), function() use ($params) {
+			$apiData = Cache::remember($cacheKey, env('API_CACHE_MINUTES', 60), function() use ($params) {
 				return $this->source->getVideosInSeries($params);
 			});
 
-			$plItems = collect($playlistItemResults['items']);
-			$batchCacheKey = $playlistId . ':videos:batch:' . $pager->getPage();
+			$results = PlaylistItem::createData(collect($apiData['items']))->merge($results->all());
 
-			$videoIds = $plItems
-				->map(function($item, $key) {
-					return $item->snippet->resourceId->videoId;
-				})->unique();
-
-			$results = $this->getVideosBatch($videoIds, $batchCacheKey)
-				->each(function($item, $key) use ($playlistId, &$order) {
-					$item->playlist = $playlistId;
-                    $item->order = $order++;
-				})->merge($results->all());
-
-			return $playlistItemResults;
+			return $apiData;
 		});
 
 		return $results;

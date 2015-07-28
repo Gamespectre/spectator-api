@@ -3,13 +3,17 @@
 namespace Spectator\Services\Youtube;
 
 use Cache;
+use Illuminate\Database\Eloquent\Collection as DbCollection;
 use Illuminate\Support\Collection;
 use Spectator\Datamodels\Playlist;
 use Spectator\Events\Youtube\PlaylistsRetrieved;
 use Spectator\Interfaces\PackageHandler;
+use Spectator\Repositories\SeriesRepository;
+use Spectator\Series;
 use Spectator\Services\ApiService;
 use Spectator\Sources\YoutubeSource;
 use Spectator\Traits\PackagesData;
+use Spectator\Video;
 
 set_time_limit(0);
 
@@ -21,11 +25,16 @@ class PlaylistService extends ApiService {
         'search' => 'searchPlaylists',
         'add' => 'getPlaylist'
     ];
+    /**
+     * @var SeriesRepository
+     */
+    private $repo;
 
-	public function __construct(YoutubeSource $source)
+    public function __construct(YoutubeSource $source, SeriesRepository $repo)
 	{
 		$this->source = $source;
-	}
+        $this->repo = $repo;
+    }
 
 	public function getPlaylists(Collection $playlistIds, $force = false)
 	{

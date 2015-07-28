@@ -43,6 +43,11 @@ class EventServiceProvider extends ServiceProvider
         'Spectator\Events\PackageEmpty' => [
             'Spectator\Listeners\PackageErrorHandler'
         ],
+
+        // Background tasks
+        'Spectator\Events\NewContentAvailable' => [
+            'Spectator\Listeners\NewContentHandler'
+        ],
     ];
 
     /**

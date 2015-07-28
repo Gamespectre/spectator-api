@@ -2,6 +2,7 @@
 
 namespace Spectator\Listeners;
 
+use Spectator\Events\NewContentAvailable;
 use Spectator\Events\PackageSaved;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -26,5 +27,7 @@ class PackageSavedHandler implements ShouldQueue
     {
         $packageId = $event->package->packageId;
         \Cache::forget($packageId);
+
+        event(new NewContentAvailable());
     }
 }

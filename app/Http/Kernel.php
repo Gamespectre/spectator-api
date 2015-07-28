@@ -29,6 +29,7 @@ class Kernel extends HttpKernel
         'auth' => \Spectator\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'guest' => \Spectator\Http\Middleware\RedirectIfAuthenticated::class,
+        'require.admin' => \Spectator\Http\Middleware\RequireAdmin::class,
         'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
         'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
     ];

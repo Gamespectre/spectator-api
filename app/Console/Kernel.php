@@ -5,6 +5,8 @@ namespace Spectator\Console;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
+set_time_limit(0);
+
 class Kernel extends ConsoleKernel
 {
     /**
@@ -17,6 +19,8 @@ class Kernel extends ConsoleKernel
         \Spectator\Console\Commands\GetVideos::class,
         \Spectator\Console\Commands\CreateBaseUser::class,
         \Spectator\Console\Commands\CreateAnonUser::class,
+        \Spectator\Console\Commands\PopulateContent::class,
+        \Spectator\Console\Commands\UpdateContent::class,
     ];
 
     /**
@@ -27,7 +31,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('inspire')
-                 ->hourly();
+        $schedule->command('gamespectre:content:populate')
+                 ->everyFiveMinutes()->withoutOverlapping()
+                 ->sendOutputTo(storage_path('logs/contentpopulate.log'));
+
+        $schedule->command('gamespectre:content:update')
+                 ->hourly()->withoutOverlapping()
+                 ->sendOutputTo(storage_path('logs/contentpopulate.log'));
     }
 }

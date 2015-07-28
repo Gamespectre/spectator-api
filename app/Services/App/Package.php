@@ -42,7 +42,10 @@ abstract class Package implements \JsonSerializable {
         $resource = $this->_params->get('resource');
         $service = $this->resolveService($resource['name']);
 
-        $this->data = $this->execService($service, $service->actions[$resource['method']]);
+        $this->data = $this->execService($service, $service->actions[$resource['method']])
+            ->reject(function($item) {
+                return $item->isPersisted();
+            })->flatten();
 
         if(empty($this->data) || ($this->data->isEmpty())) {
             event(new PackageEmpty($this));

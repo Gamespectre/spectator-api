@@ -8,7 +8,7 @@ use Spectator\Game;
 use Spectator\Series;
 use Spectator\Video as VideoModel;
 
-class Video extends Datamodel {
+class PlaylistItem extends Datamodel {
 
 	public $uniqueKey = 'video_id';
 	protected $modelClass = VideoModel::class;
@@ -21,8 +21,9 @@ class Video extends Datamodel {
 
 	public function transform($raw)
 	{
+        $image = !is_null($raw->snippet->thumbnails) ? $raw->snippet->thumbnails->high->url : "No image";
         $order = isset($raw->order) ? $raw->order : 0;
-        $id = isset($raw->id) && is_string($raw->id) ? $raw->id : $raw->id->videoId;
+        $id = $raw->snippet->resourceId->videoId;
 
 		return [
 			'id' => [$id, 'video_id'],
@@ -32,7 +33,7 @@ class Video extends Datamodel {
 			'description' => [$raw->snippet->description],
 			'order' => [$order],
 			'publishedAt' => [Carbon::parse($raw->snippet->publishedAt), 'published_at'],
-			'imageUrl' => [$raw->snippet->thumbnails->high->url, 'image_url'],
+			'imageUrl' => [$image, 'image_url'],
 		];
 	}
 

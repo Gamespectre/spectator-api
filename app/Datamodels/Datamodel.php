@@ -2,6 +2,7 @@
 
 namespace Spectator\Datamodels;
 
+use Illuminate\Database\Eloquent\Collection as DbCollection;
 use Illuminate\Support\Collection;
 
 abstract class Datamodel implements \JsonSerializable {
@@ -30,10 +31,7 @@ abstract class Datamodel implements \JsonSerializable {
 	public static function createData(Collection $rawCollection)
 	{
 		$datamodels = $rawCollection->map(function($item, $key) {
-            $datamodel = new static($item);
-            return $datamodel->isPersisted() ? false : $datamodel;
-        })->filter(function($datamodel) {
-            return $datamodel !== false;
+            return new static($item);
         })->flatten();
 
 		return $datamodels;

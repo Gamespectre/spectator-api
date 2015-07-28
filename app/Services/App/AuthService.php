@@ -31,7 +31,15 @@ class AuthService
             $token = JWTAuth::fromUser(Auth::user());
         }
         else {
-            Auth::login(Role::where('level', 'anon')->first()->users()->first());
+            $anonAccount = Role::where('level', 'anon')->first()->users()->first();
+
+            if(is_null($anonAccount)) {
+                // Shouldn't happen except if the db is wiped...
+                \Artisan::call('user:anon');
+                $anonAccount = Role::where('level', 'anon')->first()->users()->first();
+            }
+
+            Auth::login($anonAccount);
             $token = JWTAuth::fromUser(Auth::user());
         }
 
@@ -58,6 +66,8 @@ class AuthService
 
     public function userIs($level) {
         $user = Auth::user();
-        return !$user->roles()->where('level', $level)->get()->isEmpty();
+        $roles = $user->roles->where('level', $level);
+
+        return !$roles->isEmpty();
     }
 }

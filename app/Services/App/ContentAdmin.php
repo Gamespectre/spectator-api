@@ -6,6 +6,8 @@ use Spectator\Events\PackageSaveStarted;
 use Spectator\Events\PackageStarted;
 use Spectator\Exceptions\PackageNotFoundException;
 use Spectator\Repositories\GameRepository;
+use Spectator\Repositories\SeriesRepository;
+use Spectator\Services\Youtube\PlaylistService;
 
 class ContentAdmin {
 
@@ -17,12 +19,17 @@ class ContentAdmin {
      * @var GameRepository
      */
     private $game;
+    /**
+     * @var SeriesRepository
+     */
+    private $playlist;
 
-    public function __construct(AuthService $auth, GameRepository $game)
+    public function __construct(AuthService $auth, GameRepository $game, PlaylistService $playlist)
     {
 
         $this->auth = $auth;
         $this->game = $game;
+        $this->playlist = $playlist;
     }
 
     private function getChannelName($base)

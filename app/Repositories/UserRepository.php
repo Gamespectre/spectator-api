@@ -25,13 +25,17 @@ class UserRepository
 
         $name = is_null($userData->name) ? is_null($userData->nickname) ? $userData->user->snippet->title : $userData->nickname : $userData->name;
 
-        return $this->user->create([
+        $user = $this->user->create([
             'name' => $name,
             'email' => $userData->email,
             'google_id' => $userData->id,
             'avatar' => $userData->avatar,
             'token' => $userData->token
         ]);
+
+        $this->setRole($user, ['user']);
+
+        return $user;
     }
 
     public function createFromArray(array $userData)

@@ -36,7 +36,7 @@ class Playlist extends Datamodel {
 	{
 		return [
 			'id' => [isset($raw->id->playlistId) ? $raw->id->playlistId : $raw->id, 'playlist_id'],
-			'channel' => [$raw->snippet->channelId, false],
+			'channel' => [$raw->snippet->channelId, 'channel_id'],
 			'name' => [$raw->snippet->title, 'name'],
 			'publishedAt' => [Carbon::parse($raw->snippet->publishedAt), 'published_at'],
 		];

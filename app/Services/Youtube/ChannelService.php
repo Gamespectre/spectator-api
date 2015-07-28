@@ -3,6 +3,7 @@
 namespace Spectator\Services\Youtube;
 
 use Cache;
+use Illuminate\Database\Eloquent\Collection as DbCollection;
 use Illuminate\Support\Collection;
 use Spectator\Datamodels\Channel;
 use Spectator\Services\ApiService;
@@ -17,7 +18,6 @@ class ChannelService extends ApiService {
 
 	public $actions = [
 		'videos' => 'getCreatorsForVideos',
-        'playlists' => 'getCreatorForPlaylist',
 		'search' => 'searchCreators',
 		'add' => 'getCreator'
 	];
@@ -54,13 +54,27 @@ class ChannelService extends ApiService {
 		return $this->getFromIds($channelIds, 'getCreator', $force);
 	}
 
+    public function getCreatorsBatch(Collection $channelIds)
+    {
+        $ids = $channelIds->implode(',');
+
+        $params = [
+            'id' => $ids,
+            'maxResults' => 50
+        ];
+
+        $result = $this->source->getCreator($params);
+
+        return Channel::createData(collect($result['items']));
+    }
+
 	public function getCreatorsForVideos(Collection $videos, $force = false)
 	{
 		$creators = collect([]);
 
 		$videos
             ->map(function($video) {
-                return $video->channel;
+                return $video->channel_id;
             })
             ->unique()
             ->each(function($item) use (&$creators, $force) {

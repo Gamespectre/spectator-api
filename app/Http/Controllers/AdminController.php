@@ -5,12 +5,14 @@ namespace Spectator\Http\Controllers;
 use Illuminate\Http\Request;
 use Response;
 use Spectator\Events\Game\Search as GameSearch;
+use Spectator\Events\NewContentAvailable;
 use Spectator\Events\SaveCachedPackage;
 use Spectator\Events\SavePackage;
 use Spectator\Events\Youtube\Search as YoutubeSearch;
 use Spectator\Http\Requests;
 use Spectator\Repositories\GameRepository;
 use Spectator\Services\App\ContentAdmin;
+use Spectator\Services\App\ContentUpdate;
 use Spectator\Services\Youtube\YoutubeServiceManager;
 use Spectator\Sources\GiantBombSource;
 
@@ -24,11 +26,28 @@ class AdminController extends Controller
      * @var ContentAdmin
      */
     private $admin;
+    /**
+     * @var ContentUpdate
+     */
+    private $update;
 
-    public function __construct(GameRepository $game, ContentAdmin $admin)
+    public function __construct(GameRepository $game, ContentAdmin $admin, ContentUpdate $update)
     {
         $this->game = $game;
         $this->admin = $admin;
+        $this->update = $update;
+
+        $this->middleware('require.admin');
+    }
+
+    public function getPopulate()
+    {
+        event(new NewContentAvailable());
+    }
+
+    public function getUpdate()
+    {
+        $this->update->update();
     }
 
     /*
