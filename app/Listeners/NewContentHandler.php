@@ -5,7 +5,7 @@ namespace Spectator\Listeners;
 use Spectator\Events\NewContentAvailable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Spectator\Services\App\ContentUpdate;
+use Spectator\Processing\Series\Populate;
 
 class NewContentHandler implements ShouldQueue
 {
@@ -16,11 +16,11 @@ class NewContentHandler implements ShouldQueue
 
     /**
      * Create the event listener.
-     * @param ContentUpdate $admin
+     * @param Populate $populate
      */
-    public function __construct(ContentUpdate $admin)
+    public function __construct(Populate $populate)
     {
-        $this->admin = $admin;
+        $this->populate = $populate;
     }
 
     /**
@@ -31,6 +31,6 @@ class NewContentHandler implements ShouldQueue
      */
     public function handle(NewContentAvailable $event)
     {
-        $this->admin->populate();
+        //$this->populate->execute();
     }
 }

@@ -2,14 +2,11 @@
 
 namespace Spectator\Http\Controllers\Auth;
 
-use Auth;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 use Illuminate\Http\Request;
-use JWTAuth;
 use Socialite;
 use Spectator\Http\Controllers\Controller;
 use Spectator\Repositories\UserRepository;
-use JWTFactory;
 use Spectator\Services\App\AuthService;
 
 class AuthController extends Controller
@@ -56,21 +53,6 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function startLogin(Request $request)
-    {
-        $channel = 'userlogin-' . uniqid();
-        session(['channel' => $channel]);
-
-        return response()->json([
-            'success' => true,
-            'channel' => $channel
-        ]);
-    }
-
     public function redirectToProvider()
     {
         return Socialite::with('youtube')->redirect();
@@ -85,8 +67,8 @@ class AuthController extends Controller
         }
 
         $authUser = $this->user->findOrCreateUser($user);
-        $this->authService->userSignedIn($authUser);
+        $token = $this->authService->userSignedIn($authUser);
 
-        return $authUser->name . " logged in successfully. This window will close in a moment.";
+        return view('auth.loginMessage', ['user' => $authUser, 'token' => $token]);
     }
 }

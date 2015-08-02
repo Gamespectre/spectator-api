@@ -3,6 +3,7 @@
 namespace Spectator\Console\Commands;
 
 use Illuminate\Console\Command;
+use Spectator\Processing\Series\Populate;
 use Spectator\Services\App\ContentUpdate;
 
 set_time_limit(0);
@@ -22,20 +23,22 @@ class PopulateContent extends Command
      * @var string
      */
     protected $description = 'Command description.';
+
     /**
-     * @var ContentUpdate
+     * @var Populate
      */
-    private $admin;
+    private $populate;
 
     /**
      * Create a new command instance.
      *
-     * @param ContentUpdate $admin
+     * @param Populate $populate
+     * @internal param ContentUpdate $admin
      */
-    public function __construct(ContentUpdate $admin)
+    public function __construct(Populate $populate)
     {
         parent::__construct();
-        $this->admin = $admin;
+        $this->populate = $populate;
     }
 
     /**
@@ -45,6 +48,6 @@ class PopulateContent extends Command
      */
     public function handle()
     {
-        $this->admin->populate();
+        $this->populate->execute();
     }
 }

@@ -42,8 +42,6 @@ class GameController extends ApiController {
 
     public function getIndex()
     {
-        $this->setIncludes('creators,series');
-
         $models = $this->repo->getAll($this->perPage);
         $data = $this->createPagedCollection($models, $this->transformer);
         return $this->respond($data);

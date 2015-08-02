@@ -27,4 +27,9 @@ class Creator extends Model {
 	{
 		return $this->belongsTo('Spectator\User');
 	}
+
+	public function tags()
+	{
+		return $this->morphToMany('Spectator\Tag', 'taggable');
+	}
 }

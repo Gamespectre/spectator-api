@@ -23,4 +23,9 @@ class Series extends Model {
 		return $this->belongsTo('Spectator\Creator');
 	}
 
+	public function tags()
+	{
+		return $this->morphToMany('Spectator\Tag', 'taggable');
+	}
+
 }

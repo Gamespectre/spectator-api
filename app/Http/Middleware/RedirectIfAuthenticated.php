@@ -41,8 +41,10 @@ class RedirectIfAuthenticated
     public function handle($request, Closure $next)
     {
         if ($this->auth->check() && !$this->authService->userIs('anon')) {
-            $this->authService->userSignedIn($this->auth->user());
-            return $this->auth->user()->name . " logged in successfully. This window will close in a moment.";
+            $user = $this->auth->user();
+            $token = $this->authService->userSignedIn($user);
+
+            return view('auth.loginMessage', ['user' => $user, 'token' => $token]);
         }
 
         return $next($request);

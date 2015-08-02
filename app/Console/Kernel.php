@@ -32,11 +32,9 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         $schedule->command('gamespectre:content:populate')
-                 ->everyFiveMinutes()->withoutOverlapping()
-                 ->sendOutputTo(storage_path('logs/contentpopulate.log'));
+                 ->everyFiveMinutes()->withoutOverlapping();
 
         $schedule->command('gamespectre:content:update')
-                 ->hourly()->withoutOverlapping()
-                 ->sendOutputTo(storage_path('logs/contentpopulate.log'));
+                 ->everyTenMinutes()->withoutOverlapping();
     }
 }

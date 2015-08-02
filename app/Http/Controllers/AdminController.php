@@ -2,14 +2,16 @@
 
 namespace Spectator\Http\Controllers;
 
+use App;
 use Illuminate\Http\Request;
 use Response;
-use Spectator\Events\Game\Search as GameSearch;
 use Spectator\Events\NewContentAvailable;
 use Spectator\Events\SaveCachedPackage;
 use Spectator\Events\SavePackage;
-use Spectator\Events\Youtube\Search as YoutubeSearch;
 use Spectator\Http\Requests;
+use Spectator\Processing\Games\Populate as PopulateGames;
+use Spectator\Processing\Series\Populate;
+use Spectator\Processing\Series\Update;
 use Spectator\Repositories\GameRepository;
 use Spectator\Services\App\ContentAdmin;
 use Spectator\Services\App\ContentUpdate;
@@ -40,14 +42,19 @@ class AdminController extends Controller
         $this->middleware('require.admin');
     }
 
-    public function getPopulate()
+    public function getPopulateSeries()
     {
-        event(new NewContentAvailable());
+        App::make(Populate::class)->execute();
+    }
+
+    public function getPopulateGames()
+    {
+        App::make(PopulateGames::class)->execute();
     }
 
     public function getUpdate()
     {
-        $this->update->update();
+        App::make(Update::class)->execute();
     }
 
     /*
@@ -128,11 +135,10 @@ class AdminController extends Controller
         $packageId = $request->input('packageId');
         $saveDatamodels = $request->input('saveData');
 
-        $channel = $this->admin->savePackage($packageId, $saveDatamodels);
+        $this->admin->savePackage($packageId, $saveDatamodels);
 
         return response()->json([
-            'success' => true,
-            'channel' => $channel
+            'success' => true
         ]);
     }
 }

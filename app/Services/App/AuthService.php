@@ -54,14 +54,7 @@ class AuthService
     public function userSignedIn(User $user)
     {
         Auth::login($user, true);
-
-        $channel = session('channel');
-        $token = $this->createToken();
-
-        event(new UserSignedIn([
-            'user' => $user->load('roles'),
-            'token' => $token
-        ], $channel));
+        return $this->createToken();
     }
 
     public function userIs($level) {

@@ -38,7 +38,7 @@ class ContentUpdate
 
     public function populate()
     {
-        $playlists = $this->series->doesntHave('videos')->orderBy('created_at', 'desc')->take(5)->get();
+        $playlists =
         $this->getContent($playlists);
 
         print "Content populated! Playlists: " . $playlists->count();

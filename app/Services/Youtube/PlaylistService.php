@@ -68,11 +68,11 @@ class PlaylistService extends ApiService {
 		return Playlist::createData(collect($results['items']));
 	}
 
-	public function searchPlaylists($query, $force = false)
+	public function searchPlaylists($query, $results = 50, $force = false)
 	{
 		$params = [
 			'type' => 'playlist',
-			'maxResults' => 50,
+			'maxResults' => $results,
 			'part' => 'id, snippet',
 			'q' => $query
 		];

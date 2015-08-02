@@ -7,7 +7,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Spectator\Services\App\Package;
 
-class PackageSaveStarted extends Event implements ShouldBroadcast
+class PackageSaveStarted extends Event
 {
     use SerializesModels;
     /**
@@ -23,24 +23,5 @@ class PackageSaveStarted extends Event implements ShouldBroadcast
     public function __construct(Package $package)
     {
         $this->package = $package;
-    }
-
-    /**
-     * Get the channels the event should be broadcast on.
-     *
-     * @return array
-     */
-    public function broadcastOn()
-    {
-        return [$this->package->getChannel()];
-    }
-
-    public function broadcastWith()
-    {
-        return [
-            "success" => true,
-            "id" => $this->package->packageId,
-            "channel" => $this->package->getChannel()
-        ];
     }
 }

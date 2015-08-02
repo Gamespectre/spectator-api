@@ -22,4 +22,9 @@ class Game extends Model {
 	{
 		return $this->belongsToMany('Spectator\Creator');
 	}
+
+	public function tags()
+	{
+		return $this->morphToMany('Spectator\Tag', 'taggable');
+	}
 }

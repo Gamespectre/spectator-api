@@ -3,6 +3,7 @@
 namespace Spectator\Console\Commands;
 
 use Illuminate\Console\Command;
+use Spectator\Processing\Series\Update;
 use Spectator\Services\App\ContentUpdate;
 
 set_time_limit(0);
@@ -22,16 +23,20 @@ class UpdateContent extends Command
      * @var string
      */
     protected $description = 'Command description.';
+    /**
+     * @var Update
+     */
+    private $update;
 
     /**
      * Create a new command instance.
      *
-     * @param ContentUpdate $admin
+     * @param Update $update
      */
-    public function __construct(ContentUpdate $admin)
+    public function __construct(Update $update)
     {
         parent::__construct();
-        $this->admin = $admin;
+        $this->update = $update;
     }
 
     /**
@@ -41,6 +46,6 @@ class UpdateContent extends Command
      */
     public function handle()
     {
-        $this->admin->update();
+        $this->update->execute();
     }
 }
