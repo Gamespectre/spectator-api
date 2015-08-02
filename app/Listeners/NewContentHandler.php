@@ -5,22 +5,26 @@ namespace Spectator\Listeners;
 use Spectator\Events\NewContentAvailable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Spectator\Processing\Series\Populate;
+use Spectator\Processing\Games\Populate as PopulateGames;
+use Spectator\Processing\Series\Populate as PopulateSeries;
 
 class NewContentHandler implements ShouldQueue
 {
     /**
-     * @var ContentAdmin
+     * @var PopulateSeries
      */
-    private $admin;
+    private $populateSeries;
+    private $populateGames;
 
     /**
      * Create the event listener.
-     * @param Populate $populate
+     * @param PopulateSeries $populateSeries
+     * @param PopulateGames $populateGames
      */
-    public function __construct(Populate $populate)
+    public function __construct(PopulateSeries $populateSeries, PopulateGames $populateGames)
     {
-        $this->populate = $populate;
+        $this->populateGames = $populateGames;
+        $this->populateSeries = $populateSeries;
     }
 
     /**
@@ -31,6 +35,13 @@ class NewContentHandler implements ShouldQueue
      */
     public function handle(NewContentAvailable $event)
     {
-        //$this->populate->execute();
+        $type = $event->type;
+
+        if($type === 'playlist') {
+            $this->populateSeries->execute();
+        }
+        if($type === 'game') {
+            $this->populateGames->execute();
+        }
     }
 }

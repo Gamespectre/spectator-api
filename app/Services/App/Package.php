@@ -100,6 +100,11 @@ abstract class Package implements \JsonSerializable {
         return $this->data;
     }
 
+    public function getResource()
+    {
+        return $this->_params->get('resource')['name'];
+    }
+
     public function serialize()
     {
         return [

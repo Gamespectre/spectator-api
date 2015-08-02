@@ -28,6 +28,6 @@ class PackageSavedHandler implements ShouldQueue
         $packageId = $event->package->packageId;
         \Cache::forget($packageId);
 
-        event(new NewContentAvailable());
+        event(new NewContentAvailable($event->package->getResource()));
     }
 }
